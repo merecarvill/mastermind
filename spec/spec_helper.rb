@@ -2,6 +2,7 @@ require 'rubygems'
 require 'factory_girl'
 
 require_relative '../lib/models/mastermind'
+require_relative '../lib/models/core_extensions'
 
 require_relative '../spec/factories/masterminds'
 
