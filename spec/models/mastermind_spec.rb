@@ -4,6 +4,7 @@ describe Mastermind do
   let!(:mastermind) { build(:mastermind) }
   let(:guessable_colors) { [:red, :green, :orange, :yellow, :blue, :purple] }
   let(:secret_code_length) { 4 }
+  let(:example_code) { [:blue, :blue, :red, :green] }
   let(:max_turns) { 10 }
 
   describe '#initialize' do
@@ -15,8 +16,10 @@ describe Mastermind do
 
   describe '#new_game' do
 
-    it 'takes no perameters' do
+    it 'takes an optional parameter to set the secret code' do
       expect{mastermind.new_game}.not_to raise_error
+      expect{mastermind.new_game(example_code)}.not_to raise_error
+      expect(mastermind.secret_code).to eq example_code
     end
 
     it 'sets current turn to 1' do
@@ -27,6 +30,16 @@ describe Mastermind do
     it 'sets the max number of turns' do
       mastermind.new_game
       expect(mastermind.max_turns).to eq max_turns
+    end
+  end
+
+  describe '#advance_one_turn' do
+
+    it 'increments the current turn' do
+      mastermind.new_game
+      previous_turn = mastermind.current_turn
+      mastermind.advance_one_turn
+      expect(mastermind.current_turn).to eq previous_turn + 1
     end
   end
 
@@ -65,7 +78,7 @@ describe Mastermind do
   end
 
   describe '#compare_guess_to_secret_code' do
-    let(:mastermind) { build(:mastermind, secret_code: [:blue, :blue, :red, :green]) }
+    let(:mastermind) { build(:mastermind, secret_code: example_code) }
 
     it 'takes an array' do
       expect{mastermind.compare_guess_to_secret_code(Array.new)}.not_to raise_error
@@ -73,7 +86,7 @@ describe Mastermind do
 
     it 'returns a hash showing num elements in guess matching, close to, or absent from secret code' do
       feedback_types = [:match, :close, :miss]
-      guess = [:foo, :foo, :bar, :bar]
+      guess = [:foo, :foo, :bar, :baz]
 
       feedback = mastermind.compare_guess_to_secret_code(guess)
 

@@ -6,10 +6,14 @@ class Mastermind
     @guessable_colors = [:red, :green, :orange, :yellow, :blue, :purple]
   end
 
-  def new_game
-    @secret_code = generate_code(4)
+  def new_game(secret_code = generate_code(4))
+    @secret_code = secret_code
     @max_turns = 10
     @current_turn = 1
+  end
+
+  def advance_one_turn
+    @current_turn += 1
   end
 
   def guessable_color?(color)
