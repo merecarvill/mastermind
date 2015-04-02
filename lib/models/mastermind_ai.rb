@@ -2,10 +2,10 @@ class MastermindAI
   attr_accessor :feedback_history
 
   def initialize
-    @feedback_history = Hash.new
+    @feedback_history = []
   end
 
-  def get_feedback(feedback)
-
+  def store_feedback(feedback)
+    @feedback_history << feedback
   end
 end
