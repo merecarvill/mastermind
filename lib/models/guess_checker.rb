@@ -1,18 +1,18 @@
 class GuessChecker
-  attr_accessor :secret_code
+  attr_accessor :code
 
-  def initialize(secret_code)
-    @secret_code = secret_code
+  def initialize(code)
+    @code = code
   end
 
-  def compare_to_secret_code(guess)
+  def compare_to_code(guess)
     feedback = {match: 0, close: 0, miss: 0}
-    element_frequencies = @secret_code.frequencies
+    element_frequencies = @code.frequencies
     close_elements_or_misses = []
 
     guess.length.times do |index|
       guess_element = guess[index]
-      code_element = @secret_code[index]
+      code_element = @code[index]
 
       if guess_element == code_element
         feedback[:match] += 1

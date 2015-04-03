@@ -6,23 +6,23 @@ describe GuessChecker do
 
   describe '#initialize' do
 
-    it 'takes a secret code and saves it as an instance variable' do
-      expect(GuessChecker.new(example_code).secret_code).to eq example_code
+    it 'saves the given code as an instance variable' do
+      expect(GuessChecker.new(example_code).code).to eq example_code
     end
   end
 
-  describe '#compare_to_secret_code' do
+  describe '#compare_to_code' do
     
     it 'takes a guess in array form' do
       guess = Array.new
-      expect{checker.compare_to_secret_code(guess)}.not_to raise_error
+      expect{checker.compare_to_code(guess)}.not_to raise_error
     end
 
     it 'returns a hash showing num elements in guess matching, close to, or absent from secret code' do
       feedback_types = [:match, :close, :miss]
       guess = [:foo, :foo, :bar, :baz]
 
-      feedback = checker.compare_to_secret_code(guess)
+      feedback = checker.compare_to_code(guess)
 
       feedback_types.each do |type|
         expect(feedback.has_key?(type)).to be true
@@ -30,8 +30,8 @@ describe GuessChecker do
     end
 
     it 'returns all matches if all elements in guess are in secret code and in correct position' do
-      guess = checker.secret_code
-      feedback = checker.compare_to_secret_code(guess)
+      guess = checker.code
+      feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq guess.length
       expect(feedback[:close]).to eq 0
@@ -42,7 +42,7 @@ describe GuessChecker do
       # code: [:blue, :blue, :red, :green]
       #       [CLOSE, CLOSE, CLOSE, CLOSE]
       guess = [:red, :green, :blue, :blue]
-      feedback = checker.compare_to_secret_code(guess)
+      feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq 0
       expect(feedback[:close]).to eq guess.length
@@ -51,7 +51,7 @@ describe GuessChecker do
 
     it 'returns all misses if no elements in guess are in secret code' do
       guess = [:foo, :foo, :bar, :baz]
-      feedback = checker.compare_to_secret_code(guess)
+      feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq 0
       expect(feedback[:close]).to eq 0
@@ -62,7 +62,7 @@ describe GuessChecker do
       # code: [:blue, :blue, :red, :green]
       #       [CLOSE,  MISS,  MISS,  MISS]
       guess = [:green, :green, :green, :foo]
-      feedback = checker.compare_to_secret_code(guess)
+      feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq 0
       expect(feedback[:close]).to eq 1
@@ -73,7 +73,7 @@ describe GuessChecker do
       # code: [:blue, :blue, :red, :green]
       #       [MISS,  MISS,  MISS,  MATCH]
       guess = [:foo, :foo, :green, :green]
-      feedback = checker.compare_to_secret_code(guess)
+      feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq 1
       expect(feedback[:close]).to eq 0

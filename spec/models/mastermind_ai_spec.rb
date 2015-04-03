@@ -10,7 +10,7 @@ describe MastermindAI do
 
   describe '#initialize' do
 
-    it 'takes a game\'s guess elements and code length' do
+    it 'takes a game\'s guess elements and the secret code length' do
       expect{ai}.not_to raise_error
     end
 
@@ -48,19 +48,39 @@ describe MastermindAI do
 
   describe '#generate_possible_guesses' do
 
-    it 'takes the guess elements and length, and returns a set of all possible guesses' do
+    it 'takes the guess elements and length' do
       elements = [0, 1]
       length = 2
       expected_output = Set.new [[1, 1], [1, 0], [0, 1], [0, 0]]
 
-      expect(ai.generate_possible_guesses(elements, length)).to eq expected_output
+      expect{ai.generate_possible_guesses(elements, length)}.to_not raise_error
+    end
+
+    it 'stores the set of all possible guesses in an instance variable' do
+      elements = [0, 1]
+      length = 2
+      expected_output = Set.new [[1, 1], [1, 0], [0, 1], [0, 0]]
+      ai.generate_possible_guesses(elements, length)
+
+      expect(ai.possible_guesses).to eq expected_output
     end
   end
 
   describe '#eliminate_impossible_guesses' do
+    let(:example_code) { [:blue, :blue, :red, :green] }
+    let(:checker) { GuessChecker.new(example_code) }
+
 
     it 'takes feedback on a guess and eliminates all guesses that could not produce that feedback' do
-      
+      # secret code: [:blue, :blue, :red, :green]
+      guess = [:blue, :yellow, :green, :red]
+      feedback = checker.compare_to_code(guess)
+      ai.eliminate_impossible_guesses(guess, feedback)
+
+      expect(ai.possible_guesses.include?(example_code)).to eq true
+      expect(ai.possible_guesses.include?([:blue, :blue, :blue, :blue])).to eq false
+      expect(ai.possible_guesses.include?([:red, :blue, :blue, :green])).to eq false
+      expect(ai.possible_guesses.include?([:yellow, :yellow, :yellow, :yellow])).to eq false
     end
   end
 end
