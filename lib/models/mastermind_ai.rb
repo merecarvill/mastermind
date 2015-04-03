@@ -1,7 +1,9 @@
 class MastermindAI
   attr_accessor :feedback_history
 
-  def initialize
+  def initialize(guessable_colors, code_length)
+    @guessable_colors = guessable_colors
+    @code_length = code_length
     @feedback_history = []
   end
 
