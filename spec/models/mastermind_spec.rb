@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Mastermind do
   let(:default) { {
-    guessable_colors: [:red, :green, :orange, :yellow, :blue, :purple],
+    guess_elements: [:red, :green, :orange, :yellow, :blue, :purple],
     code_length: 4,
     max_turns: 10,
   } }
@@ -22,9 +22,14 @@ describe Mastermind do
 
     context 'when no parameters are given' do
 
-      it 'sets the max number of turns to 10 by default' do
-        mastermind
-        expect(mastermind.max_turns).to eq default[:max_turns]
+      it 'sets guess elements, max turns, code length to default values' do
+        set_values = {
+          guess_elements: mastermind.guess_elements,
+          code_length: mastermind.code_length,
+          max_turns: mastermind.max_turns,
+        }
+
+        expect(set_values).to eq default
       end
     end
   end
@@ -47,18 +52,6 @@ describe Mastermind do
     end
   end
 
-  describe '#guessable_color?' do
-
-    it 'returns true if given a guessable color in symbol form' do
-      color = default[:guessable_colors].sample
-      expect(mastermind.guessable_color?(color)).to eq true
-    end
-
-    it 'returns false if given something that is not a guessable color in symbol form' do
-      expect(mastermind.guessable_color?(:foo)).to eq false
-    end
-  end
-
   describe '#generate_code' do
     let(:generated_code) { mastermind.generate_code }
 
@@ -66,10 +59,19 @@ describe Mastermind do
       expect(generated_code.length).to eq mastermind.code_length
     end
 
-    it 'returns an array containing only colors that are guessable colors' do
-      generated_code.uniq.each do |color|
-        expect(mastermind.guessable_color?(color)).to eq true
+    it 'returns an array containing only elements that are guess elements' do
+      generated_code.uniq.each do |element|
+        expect(mastermind.guess_elements.include?(element)).to eq true
       end
+    end
+
+    it 'should not generate the same code every time it is called' do
+      different_codes = []
+      10.times do
+        different_codes << mastermind.generate_code
+      end
+
+      expect(different_codes.uniq.length).not_to eq 1
     end
   end
 

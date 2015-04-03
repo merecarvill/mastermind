@@ -1,8 +1,8 @@
 class Mastermind
-  attr_accessor :secret_code, :guessable_colors, :max_turns, :current_turn, :code_length
+  attr_accessor :secret_code, :guess_elements, :max_turns, :current_turn, :code_length
 
   def initialize(params = {})
-    @guessable_colors = [:red, :green, :orange, :yellow, :blue, :purple]
+    @guess_elements = params[:guess_elements] || [:red, :green, :orange, :yellow, :blue, :purple]
     @max_turns = params[:max_turns] || 10
     @code_length = params[:code_length] || 4
     @secret_code = params[:secret_code] || generate_code
@@ -16,37 +16,33 @@ class Mastermind
     @current_turn += 1
   end
 
-  def guessable_color?(color)
-    @guessable_colors.include?(color)
-  end
-
   def generate_code
     @code_length.times.with_object(Array.new) do |i, code|
-      code << @guessable_colors.sample
+      code << @guess_elements.sample
     end
   end
 
   def compare_guess_to_secret_code(guess)
     feedback = {match: 0, close: 0, miss: 0}
-    color_frequencies = @secret_code.frequencies
-    close_colors_or_misses = []
+    element_frequencies = @secret_code.frequencies
+    close_elements_or_misses = []
 
     guess.length.times do |index|
-      guess_color = guess[index]
-      code_color = @secret_code[index]
+      guess_element = guess[index]
+      code_element = @secret_code[index]
 
-      if guess_color == code_color
+      if guess_element == code_element
         feedback[:match] += 1
-        color_frequencies[code_color] -= 1
+        element_frequencies[code_element] -= 1
       else
-        close_colors_or_misses << guess_color
+        close_elements_or_misses << guess_element
       end
     end
 
-    close_colors_or_misses.each do |color|
-      if color_frequencies[color] > 0
+    close_elements_or_misses.each do |element|
+      if element_frequencies[element] > 0
         feedback[:close] += 1
-        color_frequencies[color] -= 1
+        element_frequencies[element] -= 1
       end
     end
 
