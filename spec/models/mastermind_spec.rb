@@ -1,35 +1,39 @@
 require 'spec_helper'
 
 describe Mastermind do
-  let!(:mastermind) { build(:mastermind) }
-  let(:guessable_colors) { [:red, :green, :orange, :yellow, :blue, :purple] }
-  let(:secret_code_length) { 4 }
+  let(:default) { {
+    guessable_colors: [:red, :green, :orange, :yellow, :blue, :purple],
+    code_length: 4,
+    max_turns: 10,
+  } }
   let(:example_code) { [:blue, :blue, :red, :green] }
-  let(:max_turns) { 10 }
+  let(:mastermind) { build(:mastermind) }
 
   describe '#initialize' do
 
+    it 'takes an optional hash of game parameters' do
+      expect{Mastermind.new}.not_to raise_error
+      expect{Mastermind.new(Hash.new)}.not_to raise_error
+    end
+
     it 'returns an object of type Mastermind' do
       expect(mastermind).to be_a Mastermind
+    end
+
+    context 'when no parameters are given' do
+
+      it 'sets the max number of turns to 10 by default' do
+        mastermind
+        expect(mastermind.max_turns).to eq default[:max_turns]
+      end
     end
   end
 
   describe '#new_game' do
 
-    it 'takes an optional parameter to set the secret code' do
-      expect{mastermind.new_game}.not_to raise_error
-      expect{mastermind.new_game(example_code)}.not_to raise_error
-      expect(mastermind.secret_code).to eq example_code
-    end
-
-    it 'sets current turn to 1' do
+    it 'sets the current turn to 1' do
       mastermind.new_game
       expect(mastermind.current_turn).to eq 1
-    end
-
-    it 'sets the max number of turns' do
-      mastermind.new_game
-      expect(mastermind.max_turns).to eq max_turns
     end
   end
 
@@ -45,12 +49,8 @@ describe Mastermind do
 
   describe '#guessable_color?' do
 
-    it 'takes one perameter' do
-      expect{mastermind.guessable_color?(:foo)}.not_to raise_error
-    end
-
     it 'returns true if given a guessable color in symbol form' do
-      color = guessable_colors.sample
+      color = default[:guessable_colors].sample
       expect(mastermind.guessable_color?(color)).to eq true
     end
 
@@ -60,14 +60,10 @@ describe Mastermind do
   end
 
   describe '#generate_code' do
-    let(:generated_code) { mastermind.generate_code(secret_code_length) }
+    let(:generated_code) { mastermind.generate_code }
 
-    it 'takes the desired length of the code' do
-      expect{generated_code}.not_to raise_error
-    end
-
-    it 'returns an array of the input length' do
-      expect(generated_code.length).to eq secret_code_length
+    it 'returns an array of the established code length' do
+      expect(generated_code.length).to eq mastermind.code_length
     end
 
     it 'returns an array containing only colors that are guessable colors' do
@@ -80,8 +76,9 @@ describe Mastermind do
   describe '#compare_guess_to_secret_code' do
     let(:mastermind) { build(:mastermind, secret_code: example_code) }
 
-    it 'takes an array' do
-      expect{mastermind.compare_guess_to_secret_code(Array.new)}.not_to raise_error
+    it 'takes an guess in array form' do
+      guess = Array.new
+      expect{mastermind.compare_guess_to_secret_code(guess)}.not_to raise_error
     end
 
     it 'returns a hash showing num elements in guess matching, close to, or absent from secret code' do

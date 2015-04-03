@@ -1,14 +1,14 @@
 class Mastermind
-  attr_accessor :secret_code
-  attr_reader :guessable_colors, :max_turns, :current_turn
+  attr_accessor :secret_code, :guessable_colors, :max_turns, :current_turn, :code_length
 
-  def initialize
+  def initialize(params = {})
     @guessable_colors = [:red, :green, :orange, :yellow, :blue, :purple]
+    @max_turns = params[:max_turns] || 10
+    @code_length = params[:code_length] || 4
+    @secret_code = params[:secret_code] || generate_code
   end
 
-  def new_game(secret_code = generate_code(4))
-    @secret_code = secret_code
-    @max_turns = 10
+  def new_game
     @current_turn = 1
   end
 
@@ -20,8 +20,8 @@ class Mastermind
     @guessable_colors.include?(color)
   end
 
-  def generate_code(code_length)
-    code_length.times.with_object(Array.new) do |i, code|
+  def generate_code
+    @code_length.times.with_object(Array.new) do |i, code|
       code << @guessable_colors.sample
     end
   end
