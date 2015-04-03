@@ -56,4 +56,11 @@ describe MastermindAI do
       expect(ai.generate_possible_guesses(elements, length)).to eq expected_output
     end
   end
+
+  describe '#eliminate_impossible_guesses' do
+
+    it 'takes feedback on a guess and eliminates all guesses that could not produce that feedback' do
+      
+    end
+  end
 end
