@@ -2,15 +2,15 @@ require 'spec_helper'
 
 describe MastermindAI do
   let(:default) { {
-    guessable_colors: [:red, :green, :orange, :yellow, :blue, :purple],
+    guess_elements: [:red, :green, :orange, :yellow, :blue, :purple],
     code_length: 4,
     max_turns: 10,
   } }
-  let(:ai) { MastermindAI.new(default[:guessable_colors], default[:code_length]) }
+  let(:ai) { MastermindAI.new(default[:guess_elements], default[:code_length]) }
 
   describe '#initialize' do
 
-    it 'takes a game\'s guessable colors and code length' do
+    it 'takes a game\'s guess elements and code length' do
       expect{ai}.not_to raise_error
     end
 
@@ -43,6 +43,17 @@ describe MastermindAI do
     it 'adds the hash to those stored in @feedback_history' do
       ai.store_feedback(example_feedback)
       expect(ai.feedback_history.include?(example_feedback)).to eq true
+    end
+  end
+
+  describe '#generate_possible_guesses' do
+
+    it 'takes the guess elements and length, and returns a set of all possible guesses' do
+      elements = [0, 1]
+      length = 2
+      expected_output = Set.new [[1, 1], [1, 0], [0, 1], [0, 0]]
+
+      expect(ai.generate_possible_guesses(elements, length)).to eq expected_output
     end
   end
 end
