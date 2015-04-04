@@ -7,7 +7,7 @@ describe Mastermind do
     max_turns: 10,
   } }
   let(:example_code) { [:blue, :blue, :red, :green] }
-  let(:mastermind) { build(:mastermind) }
+  let(:mastermind) { Mastermind.new }
 
   describe '#initialize' do
 
@@ -20,21 +20,60 @@ describe Mastermind do
       expect(mastermind).to be_a Mastermind
     end
 
+    it 'makes a GuessChecker' do
+      expect(mastermind.guess_checker).to be_a GuessChecker
+    end
+
     context 'when no parameters are given' do
 
       it 'sets guess elements, max turns, code length to default values' do
-        set_values = {
-          guess_elements: mastermind.guess_elements,
-          code_length: mastermind.code_length,
-          max_turns: mastermind.max_turns,
-        }
+        expect(mastermind.guess_elements).to eq default[:guess_elements]
+        expect(mastermind.code_length).to eq default[:code_length]
+        expect(mastermind.max_turns).to eq default[:max_turns]
+      end
 
-        expect(set_values).to eq default
+      it 'generates a random secret code' do
+        expect(mastermind.secret_code).not_to eq Mastermind.new.secret_code
+      end
+    end
+
+    context 'when given parameters' do
+      let(:params) { {
+        guess_elements: [1, 2, 3],
+        code_length: 5,
+        max_turns: 8,
+        secret_code: [1, 1, 3, 2, 1],
+      } }
+      let(:mastermind_with_params) { Mastermind.new(params) }
+      let(:mastermind_with_empty_params) { Mastermind.new(Hash.new) }
+
+      it 'sets guess elements, max turns, code length, and secret code to specified values' do
+        expect(mastermind_with_params.guess_elements).to eq params[:guess_elements]
+        expect(mastermind_with_params.code_length).to eq params[:code_length]
+        expect(mastermind_with_params.max_turns).to eq params[:max_turns]
+        expect(mastermind_with_params.secret_code).to eq params[:secret_code]
+      end
+
+      context 'when any attribute is not specified in parameters' do
+
+        it 'reverts to default value for that attribute' do
+          expect(mastermind_with_empty_params.guess_elements).to eq default[:guess_elements]
+          expect(mastermind_with_empty_params.code_length).to eq default[:code_length]
+          expect(mastermind_with_empty_params.max_turns).to eq default[:max_turns]
+          expect(mastermind_with_empty_params.secret_code).not_to eq Mastermind.new.secret_code
+        end
       end
     end
   end
 
   describe '#new_game' do
+    before do
+      $stdout = StringIO.new
+    end
+
+    after :all do
+      $stdout = STDOUT
+    end
 
     it 'sets the current turn to 1' do
       mastermind.new_game
