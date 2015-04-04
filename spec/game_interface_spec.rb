@@ -15,11 +15,25 @@ describe GameInterface do
     max_turns: 10,
   } }
   let(:example_code) { [:blue, :blue, :red, :green] }
-  let(:interface) { GameInterface.new }
+  let(:example_code_input) { "blue blue red green" }
+  let(:example_feedback) { {match: 1, close: 3, miss: 0} }
+  let(:example_feedback_input) { "1 3 0" }
+  let(:interface) { GameInterface.new(default[:guess_elements], default[:code_length]) }
+
+  describe '#initialize' do
+
+    it 'takes a game\'s guess elements and code length' do
+      expect{interface}.not_to raise_error
+    end
+
+    it 'returns an object of type GameInterface' do
+      expect(interface).to be_a GameInterface
+    end
+  end
 
   describe '#display_instructions' do
     before do
-      interface.display_instructions(default[:code_length], default[:guess_elements])
+      interface.display_instructions
     end
 
     it 'prints instructions' do
@@ -38,13 +52,13 @@ describe GameInterface do
   describe '#solicit_code' do
 
     it 'prints a message soliciting the player\'s secret code' do
-      allow($stdin).to receive(:gets) { "blue blue red green" }
+      allow($stdin).to receive(:gets) { example_code_input }
       interface.solicit_code
       expect($stdout.string).not_to eq ""
     end
 
     it 'returns the code given by the player' do
-      allow($stdin).to receive(:gets) { "blue blue red green" }
+      allow($stdin).to receive(:gets) { example_code_input }
       expect(interface.solicit_code).to eq example_code
     end
   end
@@ -63,16 +77,14 @@ describe GameInterface do
   describe '#solicit_feedback' do
 
     it 'prints a message soliciting feedback on a guess' do
-      allow($stdin).to receive(:gets) { "1 3 0" }
+      allow($stdin).to receive(:gets) { example_feedback_input }
       interface.solicit_feedback
       expect($stdout.string).not_to eq ""
     end
 
     it 'returns a feedback hash made from string input by the player' do
-      feedback = {match: 1, close: 3, miss: 0}
-
-      allow($stdin).to receive(:gets) { "1 3 0" }
-      expect(interface.solicit_feedback).to eq feedback
+      allow($stdin).to receive(:gets) { example_feedback_input }
+      expect(interface.solicit_feedback).to eq example_feedback
     end
   end
 

@@ -96,4 +96,23 @@ describe Mastermind do
       expect(different_codes.uniq.length).not_to eq 1
     end
   end
+
+  describe '#code_valid?' do
+
+    it 'checks if code elements are valid guess elements' do
+      invalid_elements_code = Array.new(default[:code_length], :foo)
+
+      expect(mastermind.code_valid?(example_code)).to eq true
+      expect(mastermind.code_valid?(invalid_elements_code)).to eq false
+    end
+
+    it 'checks if code is the correct length' do
+      invalid_length_code = Array.new(
+        default[:code_length] - 1, default[:guess_elements].sample
+      )
+
+      expect(mastermind.code_valid?(example_code)).to eq true
+      expect(mastermind.code_valid?(invalid_length_code)).to eq false
+    end
+  end
 end

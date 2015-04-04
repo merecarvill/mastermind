@@ -45,6 +45,12 @@ class Mastermind
     end
   end
 
+  def code_valid?(code)
+    valid_elements = code.reduce{ |bool, element| bool && @guess_elements.include?(element) }
+    valid_length = code.length == @code_length
+    valid_elements && valid_length
+  end
+
   def secret_code
     @guess_checker.code
   end

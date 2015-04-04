@@ -1,9 +1,13 @@
 class GameInterface
+  def initialize(guess_elements, code_length)
+    @guess_elements = guess_elements
+    @code_length = code_length
+  end
 
-  def display_instructions(guess_elements, code_length)
+  def display_instructions
     puts "The name of the game is Mastermind. \
-You must think of a #{code_length}-element-long code derived from the following elements: \
-#{guess_elements} \
+You must think of a #{@code_length}-element-long code derived from the following elements: \
+#{@guess_elements} \
 \
 When asked, you will enter that code, and then the computer will make several attempts to guess it. \
 You will be asked to provide feedback on each guess, identifying the number of matches, close \
@@ -20,23 +24,19 @@ Each of the remaining elements count as a 'miss'."
   def solicit_code
     puts "You may now enter your code, like so: '1st_element 2nd_element ... nth_element'"
 
-    input = STDIN.gets.chomp
+    input = STDIN.gets.strip
     input.split(" ").map{ |c| c.to_sym }
   end
 
   def display_guess(guess)
-    output = "Guess:"
-    guess.each do |guess_element|
-      output += " " + guess_element.to_s
-    end
-    puts output
+    puts guess.reduce("Guess:"){ |str, element| str += " " + element.to_s }
   end
 
   def solicit_feedback
     puts "Please input feedback on the most recent guess.\
 eg: If a guess had 1 match, 3 close, 0 misses, you should type '1 3 0'"
 
-    input = STDIN.gets.chomp
+    input = STDIN.gets.strip
     labels = [:match, :close, :miss]
     Hash[labels.zip(input.split(" ").map{ |c| c.to_i })]
   end
