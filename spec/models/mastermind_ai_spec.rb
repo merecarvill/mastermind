@@ -74,13 +74,24 @@ describe MastermindAI do
     it 'takes feedback on a guess and eliminates all guesses that could not produce that feedback' do
       # secret code: [:blue, :blue, :red, :green]
       guess = [:blue, :yellow, :green, :red]
-      feedback = checker.compare_to_code(guess)
+      feedback = checker.compare_to_code(guess) # = {match: 1, close: 2, miss 1}
       ai.eliminate_impossible_guesses(guess, feedback)
 
       expect(ai.possible_guesses.include?(example_code)).to eq true
       expect(ai.possible_guesses.include?([:blue, :blue, :blue, :blue])).to eq false
+      # {match: 1, close: 2, miss 1} != {match: 2, close: 0, miss: 2}
       expect(ai.possible_guesses.include?([:red, :blue, :blue, :green])).to eq false
+      # {match: 1, close: 2, miss 1} != {match: 1, close: 3, miss: 0}
       expect(ai.possible_guesses.include?([:yellow, :yellow, :yellow, :yellow])).to eq false
+      # {match: 1, close: 2, miss 1} != {match: 0, close: 0, miss: 4}
+    end
+  end
+
+  describe '#make_guess' do
+
+    it 'returns a guess from the set of possible guesses' do
+      guess = ai.make_guess
+      expect(ai.possible_guesses.include?(guess)).to eq true
     end
   end
 end

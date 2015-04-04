@@ -7,6 +7,10 @@ class MastermindAI
     generate_possible_guesses(guess_elements, guess_length)
   end
 
+  def make_guess
+    @possible_guesses.first
+  end
+
   def store_feedback(feedback)
     @feedback_history << feedback
   end
