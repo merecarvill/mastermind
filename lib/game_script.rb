@@ -1,3 +1,3 @@
-require_relative 'models/mastermind'
+require_relative 'mastermind'
 
 Mastermind.new.new_game
