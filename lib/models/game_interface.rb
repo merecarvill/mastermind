@@ -17,6 +17,13 @@ eg: A code of 'blue foo foo foo' and a guess of 'bar blue blue blue' would yeild
 Each of the remaining elements count as a 'miss'."
   end
 
+  def solicit_code
+    puts "You may now enter your code, like so: '1st_element 2nd_element ... nth_element'"
+
+    input = STDIN.gets.chomp
+    input.split(" ").map{ |c| c.to_sym }
+  end
+
   def display_guess(guess)
     output = "Guess:"
     guess.each do |guess_element|
