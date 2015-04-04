@@ -1,6 +1,6 @@
 class GameInterface
 
-  def display_instructions(code_length, guess_elements)
+  def display_instructions(guess_elements, code_length)
     puts "The name of the game is Mastermind. \
 You must think of a #{code_length}-element-long code derived from the following elements: \
 #{guess_elements} \
