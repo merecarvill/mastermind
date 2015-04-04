@@ -5,22 +5,29 @@ class GameInterface
   end
 
   def display_instructions
+    puts
     puts "The name of the game is Mastermind."
+    puts
     puts "You must think of a #{@code_length}-element-long code derived from the following \
-elements: #{@guess_elements}"
+elements: " + @guess_elements.join(", ")
+    puts "That guess can contain duplicate elements."
+    puts
     puts "When asked, you will enter that code, and then the computer will make several \
 attempts to guess it. You will be asked to provide feedback on each guess, identifying the \
 number of matches, close elements, and misses."
+    puts
     puts "A 'match' is an element in a guess that exists in your code and is in the correct \
 position."
     puts "A 'close' element exists in your code, but in a different position than where it \
 occurs in the guess."
     puts "A 'miss' is an element in a guess that does not occur in your code."
+    puts
     puts "Note that for there to be multiple 'close' elements of the same kind, there must \
 be an equivalent number of that type of element in the code, otherwise each extra should be \
 counted as a 'miss'."
     puts "eg: A code of 'blue foo foo foo' and a guess of 'bar blue blue blue' would yeild \
 only one 'close'. Each of the remaining elements count as a 'miss'."
+    puts
   end
 
   def solicit_code
@@ -31,7 +38,9 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
   end
 
   def display_guess(guess)
-    puts guess.reduce("Guess:"){ |str, element| str += " " + element.to_s }
+    puts
+    puts "The computer's guess is: " + guess.join(" ")
+    puts
   end
 
   def solicit_feedback
@@ -44,10 +53,12 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
   end
 
   def display_code_maker_won
+    puts
     puts "Your code wasn't guessed, so you win!" 
   end
 
   def display_code_maker_lost
+    puts
     puts "Your code was guessed, so you lose! There's always next time." 
   end
 end
