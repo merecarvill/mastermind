@@ -1,3 +1,8 @@
+require_relative 'game_interface'
+require_relative 'guess_checker'
+require_relative 'mastermind_ai'
+require_relative 'core_extensions'
+
 class Mastermind
   attr_reader :guess_checker, :ai, :interface, :guess_elements, :code_length, :max_turns, :current_turn
 
