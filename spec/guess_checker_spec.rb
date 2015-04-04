@@ -81,4 +81,17 @@ describe GuessChecker do
     end
   end
 
+  describe '#correct_feedback?' do
+
+    it 'checks whether given guess results in given feedback when compared to secret code' do
+      # code: [:blue, :blue, :red, :green]
+      #       [CLOSE,  MISS,  MISS,  MATCH]
+      guess = [:red, :green, :green, :green]
+      correct_feedback = {match: 1, close: 1, miss: 2}
+      incorrect_feedback = {match: 0, close: 3, miss: 1}
+
+      expect(checker.correct_feedback?(guess, correct_feedback)).to be true
+      expect(checker.correct_feedback?(guess, incorrect_feedback)).to be false
+    end
+  end
 end

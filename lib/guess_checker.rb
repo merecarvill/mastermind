@@ -33,4 +33,8 @@ class GuessChecker
 
     return feedback
   end
+
+  def correct_feedback?(guess, feedback)
+    compare_to_code(guess) == feedback
+  end
 end
