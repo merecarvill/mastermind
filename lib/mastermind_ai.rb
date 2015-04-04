@@ -1,18 +1,12 @@
 class MastermindAI
-  attr_accessor :feedback_history, :possible_guesses
+  attr_accessor :possible_guesses
 
   def initialize(guess_elements, guess_length)
-    @feedback_history = []
-
     generate_possible_guesses(guess_elements, guess_length)
   end
 
   def make_guess
-    @possible_guesses.first
-  end
-
-  def store_feedback(feedback)
-    @feedback_history << feedback
+    @possible_guesses.sample
   end
 
   def generate_possible_guesses(guess_elements, guess_length)

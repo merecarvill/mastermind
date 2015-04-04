@@ -12,13 +12,13 @@ class Mastermind
     @code_length = params[:code_length] ||= 4
     @guess_checker = GuessChecker.new(params[:secret_code] ||= generate_code)
     @ai = MastermindAI.new(@guess_elements, @code_length)
-    @interface = GameInterface.new
+    @interface = GameInterface.new(@guess_elements, @code_length)
   end
 
   def new_game
     @current_turn = 1
 
-    @interface.display_instructions(@guess_elements, @code_length)
+    @interface.display_instructions
     @interface.solicit_code
 
     while @current_turn <= @max_turns
@@ -37,10 +37,6 @@ class Mastermind
     end
 
     @interface.display_code_maker_won
-  end
-
-  def advance_one_turn
-    @current_turn += 1
   end
 
   def generate_code
