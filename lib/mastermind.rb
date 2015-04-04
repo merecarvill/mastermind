@@ -19,14 +19,14 @@ class Mastermind
 
     @interface.display_instructions
 
-    secret_code = @interface.solicit_code until valid_code?(secret_code)
+    secret_code = @interface.solicit_code until code_valid?(secret_code)
     @guess_checker = GuessChecker.new(secret_code)
 
     while @current_turn <= @max_turns
       ai_guess = @ai.make_guess
       @interface.display_guess(ai_guess)
 
-      feedback = @interface.solicit_feedback until guess_checker.correct_feedback?(guess, feedback)
+      feedback = @interface.solicit_feedback until guess_checker.correct_feedback?(ai_guess, feedback)
 
       if feedback[:match] == @code_length
         @interface.display_code_maker_lost
@@ -41,9 +41,10 @@ class Mastermind
   end
 
   def code_valid?(code)
+    return false if code == nil
+
     valid_elements = code.reduce{ |bool, element| bool && @guess_elements.include?(element) }
-    valid_length = code.length == @code_length
-    valid_elements && valid_length
+    valid_elements && code.length == @code_length
   end
 
   def secret_code
