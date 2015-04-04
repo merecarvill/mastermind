@@ -41,7 +41,7 @@ describe GameInterface do
     end
 
     it 'includes the guess elements in the instructions' do
-      expect($stdout.string.include?(default[:guess_elements].to_s)).to eq true
+      expect($stdout.string.include?(default[:guess_elements].join(", "))).to eq true
     end
 
     it 'includes the code length in the instructions' do
