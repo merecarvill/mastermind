@@ -24,6 +24,14 @@ describe Mastermind do
       expect(mastermind.guess_checker).to be_a GuessChecker
     end
 
+    it 'makes a MastermindAI' do
+      expect(mastermind.ai).to be_a MastermindAI
+    end
+
+    it 'makes a GameInterface' do
+      expect(mastermind.interface).to be_a GameInterface
+    end
+
     context 'when no parameters are given' do
 
       it 'sets guess elements, max turns, code length to default values' do
@@ -56,7 +64,7 @@ describe Mastermind do
 
       context 'when any attribute is not specified in parameters' do
 
-        it 'reverts to default value for that attribute' do
+        it 'reverts to default behavior in setting that attribute' do
           expect(mastermind_with_empty_params.guess_elements).to eq default[:guess_elements]
           expect(mastermind_with_empty_params.code_length).to eq default[:code_length]
           expect(mastermind_with_empty_params.max_turns).to eq default[:max_turns]
@@ -65,32 +73,7 @@ describe Mastermind do
       end
     end
   end
-
-  describe '#new_game' do
-    before do
-      $stdout = StringIO.new
-    end
-
-    after :all do
-      $stdout = STDOUT
-    end
-
-    it 'sets the current turn to 1' do
-      mastermind.new_game
-      expect(mastermind.current_turn).to eq 1
-    end
-  end
-
-  describe '#advance_one_turn' do
-
-    it 'increments the current turn' do
-      mastermind.new_game
-      previous_turn = mastermind.current_turn
-      mastermind.advance_one_turn
-      expect(mastermind.current_turn).to eq previous_turn + 1
-    end
-  end
-
+  
   describe '#generate_code' do
     let(:generated_code) { mastermind.generate_code }
 
