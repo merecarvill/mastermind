@@ -56,10 +56,10 @@ describe MastermindAI do
       expect{ai.generate_possible_guesses(elements, length)}.to_not raise_error
     end
 
-    it 'stores the set of all possible guesses in an instance variable' do
+    it 'stores all possible guesses in an instance variable' do
       elements = [0, 1]
       length = 2
-      expected_output = Set.new [[1, 1], [1, 0], [0, 1], [0, 0]]
+      expected_output =[[1, 1], [1, 0], [0, 1], [0, 0]]
       ai.generate_possible_guesses(elements, length)
 
       expect(ai.possible_guesses).to eq expected_output

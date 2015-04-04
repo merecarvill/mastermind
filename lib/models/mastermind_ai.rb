@@ -16,7 +16,7 @@ class MastermindAI
   end
 
   def generate_possible_guesses(guess_elements, guess_length)
-    @possible_guesses = Set.new guess_elements.repeated_permutation(guess_length).to_a
+    @possible_guesses = guess_elements.repeated_permutation(guess_length).to_a
   end
 
   def eliminate_impossible_guesses(guess, feedback)
