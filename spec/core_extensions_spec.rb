@@ -9,6 +9,7 @@ describe Array do
       array = [:foo, :bar, :foo]
       output_hash = {foo: 2, bar: 1}
       expect(array.frequencies).to eq output_hash
+      expect(array.frequencies[:baz]).to eq 0
     end
   end
 
@@ -34,16 +35,16 @@ describe Array do
     end
   end
 
-  describe '#delete_first_for_each_in' do
+  describe '#subtract_one_for_one' do
 
-    it 'for every item in given array, deletes the first occurrence from target array' do
-      example_array.delete_first_for_each_in([1, 2, 3])
-      expect(example_array).to eq [1]
+    it 'returns a new array with every element from given array removed from original one-for-one' do
+      new_array = example_array.subtract_one_for_one([1, 2, 3])
+      expect(new_array).to eq [1]
     end
 
-    it 'does nothing for items in given array that are not present in target array' do
-      example_array.delete_first_for_each_in([:not, :elements, :in, :the, :array])
-      expect(example_array).to eq example_array
+    it 'does ignores items in given array that are not present in original array' do
+      new_array = example_array.subtract_one_for_one([:not, :elements, :in, :the, :array])
+      expect(new_array).to eq example_array
     end
   end
 end

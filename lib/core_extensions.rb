@@ -8,9 +8,10 @@ class Array
     self.delete_at(self.index(item) || self.length)
   end
 
-  def delete_first_for_each_in(array)
-    array.each do |item|
-      self.delete_first(item)
+  def subtract_one_for_one(array)
+    new_array = self.dup
+    array.each_with_object(new_array) do |item|
+      new_array.delete_first(item)
     end
   end
 end
