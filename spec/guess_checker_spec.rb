@@ -6,8 +6,16 @@ describe GuessChecker do
 
   describe '#initialize' do
 
+    it 'takes a code' do
+      expect{checker}.not_to raise_error
+    end
+
     it 'saves the given code as an instance variable' do
-      expect(GuessChecker.new(example_code).code).to eq example_code
+      expect(checker.code).to eq example_code
+    end
+
+    it 'returns an object of type GuessChecker' do
+      expect(checker).to be_a GuessChecker
     end
   end
 

@@ -1,3 +1,5 @@
+require_relative 'core_extensions'
+
 class GuessChecker
   attr_reader :code
 

@@ -19,6 +19,32 @@ describe MastermindAI do
     end
   end
 
+  describe '#make_guess' do
+
+    it 'returns a guess from the set of possible codes' do
+      guess = ai.make_guess
+      expect(ai.possible_codes.include?(guess)).to eq true
+    end
+  end
+
+  describe '#receive_feedback' do
+    let(:feedback) { {match: 1, close: 2, miss: 1} }
+    before do
+      ai.last_guess_made = [:blue, :yellow, :green, :red]
+    end
+
+    it 'stores given feedback as last feedback received' do
+      ai.receive_feedback(feedback)
+      expect(ai.last_feedback_received).to eq feedback
+    end
+
+    it 'triggers ai to use feedback to eliminate possible codes' do
+      num_initial_possible_codes = ai.possible_codes.length
+      ai.receive_feedback(feedback)
+      expect(ai.possible_codes.length).to be < num_initial_possible_codes
+    end
+  end
+
   describe '#generate_possible_codes' do
 
     it 'takes the guess elements and code length' do
@@ -41,19 +67,17 @@ describe MastermindAI do
     end
   end
 
-  describe '#eliminate_codes_producing_different_feedback' do
+  describe '#eliminate_codes_producing_incompatible_feedback' do
     let(:secret_code) { [:blue, :blue, :red, :green] }
-    let(:checker) { GuessChecker.new(secret_code) }
+    before do
+      ai.last_guess_made = [:blue, :yellow, :green, :red]
+      ai.last_feedback_received = {match: 1, close: 2, miss: 1}
+      ai.eliminate_codes_producing_incompatible_feedback
+    end
 
 
-    it 'takes a guess and associated feedback and eliminates all codes not producing the same feedback' do
-      # secret code: [:blue, :blue, :red, :green]
-      #               [MATCH, MISS, CLOSE, CLOSE]
-      guess =        [:blue, :yellow, :green, :red]
-      feedback = checker.compare_to_code(guess)
-      ai.eliminate_codes_producing_different_feedback(guess, feedback)
-
-      expect(ai.possible_codes.include?(guess)).to be false
+    it 'eliminates codes whose feedback != last received feedback when compared to last guess made' do
+      expect(ai.possible_codes.include?(ai.last_guess_made)).to be false
       expect(ai.possible_codes.include?(secret_code)).to be true
 
       expect(ai.possible_codes.include?([:blue, :green, :yellow, :orange])).to be true
@@ -62,23 +86,15 @@ describe MastermindAI do
       expect(ai.possible_codes.include?([:blue, :red, :red, :yellow])).to be true
 
       # any permutation of the guess can't be the code, since there was one miss
-      guess.permutation(4).to_a.each do |guess_permutation|
+      ai.last_guess_made.permutation(4).to_a.each do |guess_permutation|
         expect(ai.possible_codes.include?(guess_permutation)).to be false
       end
 
       # given the guess and the code, a code of all the same element is impossible
-      default[:code_elements].each do |guess_element|
-        all_same_code = Array.new(default[:code_length], guess_element)
+      default[:code_elements].each do |code_element|
+        all_same_code = Array.new(default[:code_length], code_element)
         expect(ai.possible_codes.include?(all_same_code)).to be false
       end
-    end
-  end
-
-  describe '#make_guess' do
-
-    it 'returns a guess from the set of possible codes' do
-      guess = ai.make_guess
-      expect(ai.possible_codes.include?(guess)).to eq true
     end
   end
 end
