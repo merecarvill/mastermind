@@ -16,7 +16,17 @@ class Mastermind
 
   def new_game
     set_up_game
+    run_game
+  end
 
+  def set_up_game
+    @interface.display_instructions
+    secret_code = @interface.solicit_code until code_valid?(secret_code)
+    @guess_checker = GuessChecker.new(secret_code)
+    @secret_code = secret_code
+  end
+
+  def run_game
     @max_turns.times do
       ai_guess = make_and_show_guess_with_code_reminder
       feedback = handle_feedback(ai_guess)
@@ -25,15 +35,7 @@ class Mastermind
         return
       end
     end
-
     @interface.display_code_maker_won
-  end
-
-  def set_up_game
-    @interface.display_instructions
-    secret_code = @interface.solicit_code until code_valid?(secret_code)
-    @guess_checker = GuessChecker.new(secret_code)
-    @secret_code = secret_code
   end
 
   def make_and_show_guess_with_code_reminder
