@@ -65,11 +65,26 @@ describe GameInterface do
 
   describe '#display_guess' do
 
-    it 'prints a given guess' do
+    it 'prints a given guess, including mention of "guess" and "computer"' do
       interface.display_guess(example_code)
       expect($stdout.string).not_to eq ""
+      expect($stdout.string.include?("computer")).to be true
+      expect($stdout.string.include?("guess")).to be true
       example_code.each do |element|
-        expect($stdout.string.include?(element.to_s)).to eq true
+        expect($stdout.string.include?(element.to_s)).to be true
+      end
+    end
+  end
+
+  describe '#display_code_reminder' do
+
+    it 'prints a reminder of the given secret code, including mention of "your" and "code"' do
+      interface.display_code_reminder(example_code)
+      expect($stdout.string).not_to eq ""
+      expect($stdout.string.include?("your")).to be true
+      expect($stdout.string.include?("code")).to be true
+      example_code.each do |element|
+        expect($stdout.string.include?(element.to_s)).to be true
       end
     end
   end

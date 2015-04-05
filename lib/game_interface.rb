@@ -37,10 +37,18 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
     input.split(" ").map{ |c| c.to_sym }
   end
 
-  def display_guess(guess)
+  def display_guess(code)
     puts
-    puts "The computer's guess is: " + guess.join(" ")
+    puts "The computer's guess is: " + code_to_s(code)
+  end
+
+  def display_code_reminder(code)
+    puts "Remember, your code was: " + code_to_s(code)
     puts
+  end
+
+  def code_to_s(code)
+    code.join(" ")
   end
 
   def solicit_feedback
