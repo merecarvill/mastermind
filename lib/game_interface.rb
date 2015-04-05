@@ -10,11 +10,11 @@ class GameInterface
     puts
     puts "You must think of a #{@code_length}-element-long code derived from the following \
 elements: " + @code_elements.join(", ")
-    puts "TYour guess can contain duplicate elements."
+    puts "Your guess can contain duplicate elements."
     puts
-    puts "When asked, you will enter that code, and then the computer will make several \
-attempts to guess it. You will be asked to provide feedback on each guess, identifying the \
-number of matches, close elements, and misses."
+    puts "When asked, you will enter that code and the computer will make several attempts \
+to guess it. You will be asked to provide feedback on each guess, identifying the number of \
+matches, close elements, and misses."
     puts
     puts "A 'match' is an element in a guess that exists in your code and is in the correct \
 position."
@@ -35,6 +35,11 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
 
     input = STDIN.gets.strip
     input.split(" ").map{ |c| c.to_sym }
+  end
+
+  def clear_screen
+    system("cls")
+    system("clear")
   end
 
   def display_guess(code)
@@ -60,10 +65,6 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
     feedback[:close] = solicit_feedback_aspect(:close)
     feedback[:miss] = solicit_feedback_aspect(:miss)
     return feedback
-    # input = STDIN.gets.strip
-    # parsed_input = input.split(" ").map{ |c| c.to_i }
-    # labels = [:match, :close, :miss]
-    # Hash[labels.zip(parsed_input)]
   end
 
   def solicit_feedback_aspect(aspect)
