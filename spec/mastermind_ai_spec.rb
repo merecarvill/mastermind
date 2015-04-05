@@ -19,54 +19,66 @@ describe MastermindAI do
     end
   end
 
-  describe '#generate_possible_guesses' do
+  describe '#generate_possible_codes' do
 
-    it 'takes the guess elements and length' do
+    it 'takes the guess elements and code length' do
       elements = [0, 1]
       length = 2
 
-      expect{ai.generate_possible_guesses(elements, length)}.to_not raise_error
+      expect{ai.generate_possible_codes(elements, length)}.to_not raise_error
     end
 
-    it 'stores all possible guesses in an instance variable' do
+    it 'stores all possible codes in an instance variable' do
       elements = [0, 1]
       length = 2
       expected_output =[[1, 1], [1, 0], [0, 1], [0, 0]]
-      ai.generate_possible_guesses(elements, length)
+      ai.generate_possible_codes(elements, length)
 
-      expect(ai.possible_guesses.length).to eq expected_output.length
+      expect(ai.possible_codes.length).to eq expected_output.length
       expected_output.each do |guess|
-        expect(ai.possible_guesses.include?(guess)).to eq true
+        expect(ai.possible_codes.include?(guess)).to eq true
       end
     end
   end
 
-  describe '#eliminate_impossible_guesses' do
-    let(:example_code) { [:blue, :blue, :red, :green] }
-    let(:checker) { GuessChecker.new(example_code) }
+  describe '#eliminate_codes_producing_different_feedback' do
+    let(:secret_code) { [:blue, :blue, :red, :green] }
+    let(:checker) { GuessChecker.new(secret_code) }
 
 
-    it 'takes feedback on a guess and eliminates all guesses that could not produce that feedback' do
+    it 'takes a guess and associated feedback and eliminates all codes not producing the same feedback' do
       # secret code: [:blue, :blue, :red, :green]
-      guess = [:blue, :yellow, :green, :red]
-      feedback = checker.compare_to_code(guess) # = {match: 1, close: 2, miss 1}
-      ai.eliminate_impossible_guesses(guess, feedback)
+      #               [MATCH, MISS, CLOSE, CLOSE]
+      guess =        [:blue, :yellow, :green, :red]
+      feedback = checker.compare_to_code(guess)
+      ai.eliminate_codes_producing_different_feedback(guess, feedback)
 
-      expect(ai.possible_guesses.include?(example_code)).to eq true
-      expect(ai.possible_guesses.include?([:blue, :blue, :blue, :blue])).to eq false
-      # {match: 1, close: 2, miss 1} != {match: 2, close: 0, miss: 2}
-      expect(ai.possible_guesses.include?([:red, :blue, :blue, :green])).to eq false
-      # {match: 1, close: 2, miss 1} != {match: 1, close: 3, miss: 0}
-      expect(ai.possible_guesses.include?([:yellow, :yellow, :yellow, :yellow])).to eq false
-      # {match: 1, close: 2, miss 1} != {match: 0, close: 0, miss: 4}
+      expect(ai.possible_codes.include?(guess)).to be false
+      expect(ai.possible_codes.include?(secret_code)).to be true
+
+      expect(ai.possible_codes.include?([:blue, :green, :yellow, :orange])).to be true
+      expect(ai.possible_codes.include?([:purple, :yellow, :red, :green])).to be true
+      expect(ai.possible_codes.include?([:red, :purple, :green, :blue])).to be true
+      expect(ai.possible_codes.include?([:blue, :red, :red, :yellow])).to be true
+
+      # any permutation of the guess can't be the code, since there was one miss
+      guess.permutation(4).to_a.each do |guess_permutation|
+        expect(ai.possible_codes.include?(guess_permutation)).to be false
+      end
+
+      # given the guess and the code, a code of all the same element is impossible
+      default[:guess_elements].each do |guess_element|
+        all_same_code = Array.new(default[:code_length], guess_element)
+        expect(ai.possible_codes.include?(all_same_code)).to be false
+      end
     end
   end
 
   describe '#make_guess' do
 
-    it 'returns a guess from the set of possible guesses' do
+    it 'returns a guess from the set of possible codes' do
       guess = ai.make_guess
-      expect(ai.possible_guesses.include?(guess)).to eq true
+      expect(ai.possible_codes.include?(guess)).to eq true
     end
   end
 end
