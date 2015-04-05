@@ -10,7 +10,7 @@ class GameInterface
     puts
     puts "You must think of a #{@code_length}-element-long code derived from the following \
 elements: " + @code_elements.join(", ")
-    puts "That guess can contain duplicate elements."
+    puts "TYour guess can contain duplicate elements."
     puts
     puts "When asked, you will enter that code, and then the computer will make several \
 attempts to guess it. You will be asked to provide feedback on each guess, identifying the \
@@ -52,13 +52,24 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
   end
 
   def solicit_feedback
-    puts "Please input feedback on the most recent guess."
-    puts "For example, if a guess had 1 match, 3 close, 0 misses, you should type '1 3 0'"
+    feedback = Hash.new
 
-    input = STDIN.gets.strip
-    parsed_input = input.split(" ").map{ |c| c.to_i }
-    labels = [:match, :close, :miss]
-    Hash[labels.zip(parsed_input)]
+    puts "Please input feedback on the most recent guess."
+
+    feedback[:match] = solicit_feedback_aspect(:match)
+    feedback[:close] = solicit_feedback_aspect(:close)
+    feedback[:miss] = solicit_feedback_aspect(:miss)
+    return feedback
+    # input = STDIN.gets.strip
+    # parsed_input = input.split(" ").map{ |c| c.to_i }
+    # labels = [:match, :close, :miss]
+    # Hash[labels.zip(parsed_input)]
+  end
+
+  def solicit_feedback_aspect(aspect)
+    grammatical_insert = aspect == :close ? "" : "a "
+    print "How many elements were #{grammatical_insert + aspect.to_s}? "
+    return STDIN.gets.strip.to_i
   end
 
   def display_code_maker_won

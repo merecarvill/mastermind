@@ -16,8 +16,6 @@ describe GameInterface do
   } }
   let(:example_code) { [:blue, :blue, :red, :green] }
   let(:example_code_input) { "blue blue red green" }
-  let(:example_feedback) { {match: 1, close: 3, miss: 0} }
-  let(:example_feedback_input) { "1 3 0" }
   let(:interface) { GameInterface.new(default[:code_elements], default[:code_length]) }
 
   describe '#initialize' do
@@ -100,16 +98,64 @@ describe GameInterface do
   end
 
   describe '#solicit_feedback' do
+    let(:example_feedback) { {match: 1, close: 3, miss: 0} }
+    let(:example_feedback_input) { ["1 match", "3close", "0"] }
 
     it 'prints a message soliciting feedback on a guess' do
-      allow($stdin).to receive(:gets) { example_feedback_input }
+      allow($stdin).to receive(:gets) { example_feedback_input.shift }
       interface.solicit_feedback
       expect($stdout.string).not_to eq ""
     end
 
     it 'returns a feedback hash made from string input by the player' do
-      allow($stdin).to receive(:gets) { example_feedback_input }
+      allow($stdin).to receive(:gets) { example_feedback_input.shift }
       expect(interface.solicit_feedback).to eq example_feedback
+    end
+  end
+
+  describe '#solicit_feedback_aspect' do
+
+    it 'prints a prompt asking player to input the given aspect of feedback' do
+      allow($stdin).to receive(:gets) { "2" }
+
+      interface.solicit_feedback_aspect(:foo)
+      expect($stdout.string).not_to eq ""
+    end
+
+    it 'specifies the aspect solicited in the message' do
+      allow($stdin).to receive(:gets) { "2" }
+
+      interface.solicit_feedback_aspect(:match)
+      expect($stdout.string.include?("match")).to be true
+      $stdout.flush
+
+      interface.solicit_feedback_aspect(:close)
+      expect($stdout.string.include?("close")).to be true
+      $stdout.flush
+
+      interface.solicit_feedback_aspect(:miss)
+      expect($stdout.string.include?("miss")).to be true
+    end
+
+    it 'returns player input in integer form' do
+      allow($stdin).to receive(:gets) { "2" }
+
+      player_input = interface.solicit_feedback_aspect(:foo)
+      expect(player_input).to eq 2
+    end
+
+    it 'returns the numerical component as an integer if player input begins with a number' do
+      allow($stdin).to receive(:gets) { "2 matches" }
+
+      player_input = interface.solicit_feedback_aspect(:foo)
+      expect(player_input).to eq 2
+    end
+
+    it 'returns the integer 0 when player input does not begin with a numerical element' do
+      allow($stdin).to receive(:gets) { "f8" }
+
+      player_input = interface.solicit_feedback_aspect(:foo)
+      expect(player_input).to eq 0
     end
   end
 
