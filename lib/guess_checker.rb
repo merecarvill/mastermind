@@ -7,6 +7,7 @@ class GuessChecker
 
   def compare_to_code(guess)
     matching_elements = get_matches(guess)
+    
     num_matches = matching_elements.length
     num_close = count_close_elements(guess, matching_elements)
     num_misses = @code.length - num_matches - num_close

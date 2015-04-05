@@ -10,7 +10,7 @@ describe GameInterface do
   end
 
   let(:default) { {
-    guess_elements: [:red, :green, :orange, :yellow, :blue, :purple],
+    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
     code_length: 4,
     max_turns: 10,
   } }
@@ -18,7 +18,7 @@ describe GameInterface do
   let(:example_code_input) { "blue blue red green" }
   let(:example_feedback) { {match: 1, close: 3, miss: 0} }
   let(:example_feedback_input) { "1 3 0" }
-  let(:interface) { GameInterface.new(default[:guess_elements], default[:code_length]) }
+  let(:interface) { GameInterface.new(default[:code_elements], default[:code_length]) }
 
   describe '#initialize' do
 
@@ -41,7 +41,7 @@ describe GameInterface do
     end
 
     it 'includes the guess elements in the instructions' do
-      expect($stdout.string.include?(default[:guess_elements].join(", "))).to eq true
+      expect($stdout.string.include?(default[:code_elements].join(", "))).to eq true
     end
 
     it 'includes the code length in the instructions' do

@@ -4,14 +4,14 @@ require_relative 'mastermind_ai'
 require_relative 'core_extensions'
 
 class Mastermind
-  attr_reader :guess_checker, :ai, :interface, :guess_elements, :code_length, :max_turns, :current_turn
+  attr_reader :ai, :interface, :code_elements, :code_length, :max_turns
 
   def initialize(params = {})
-    @guess_elements = params[:guess_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
+    @code_elements = params[:code_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
     @max_turns = params[:max_turns] ||= 10
     @code_length = params[:code_length] ||= 4
-    @ai = MastermindAI.new(@guess_elements, @code_length)
-    @interface = GameInterface.new(@guess_elements, @code_length)
+    @ai = MastermindAI.new(@code_elements, @code_length)
+    @interface = GameInterface.new(@code_elements, @code_length)
   end
 
   def new_game
@@ -40,7 +40,6 @@ class Mastermind
   def code_valid?(code)
     return false if code == nil
 
-    valid_elements = code.reduce{ |bool, element| bool && @guess_elements.include?(element) }
-    valid_elements && code.length == @code_length
+    code.length == @code_length && code.reduce{ |bool, element| bool && @code_elements.include?(element) }
   end
 end

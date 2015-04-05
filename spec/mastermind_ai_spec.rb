@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe MastermindAI do
   let(:default) { {
-    guess_elements: [:red, :green, :orange, :yellow, :blue, :purple],
+    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
     code_length: 4,
     max_turns: 10,
   } }
-  let(:ai) { MastermindAI.new(default[:guess_elements], default[:code_length]) }
+  let(:ai) { MastermindAI.new(default[:code_elements], default[:code_length]) }
 
   describe '#initialize' do
 
@@ -67,7 +67,7 @@ describe MastermindAI do
       end
 
       # given the guess and the code, a code of all the same element is impossible
-      default[:guess_elements].each do |guess_element|
+      default[:code_elements].each do |guess_element|
         all_same_code = Array.new(default[:code_length], guess_element)
         expect(ai.possible_codes.include?(all_same_code)).to be false
       end

@@ -1,6 +1,6 @@
 class GameInterface
-  def initialize(guess_elements, code_length)
-    @guess_elements = guess_elements
+  def initialize(code_elements, code_length)
+    @code_elements = code_elements
     @code_length = code_length
   end
 
@@ -9,7 +9,7 @@ class GameInterface
     puts "The name of the game is Mastermind."
     puts
     puts "You must think of a #{@code_length}-element-long code derived from the following \
-elements: " + @guess_elements.join(", ")
+elements: " + @code_elements.join(", ")
     puts "That guess can contain duplicate elements."
     puts
     puts "When asked, you will enter that code, and then the computer will make several \

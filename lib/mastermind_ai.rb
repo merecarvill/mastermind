@@ -1,16 +1,16 @@
 class MastermindAI
   attr_accessor :possible_codes
 
-  def initialize(guess_elements, code_length)
-    generate_possible_codes(guess_elements, code_length)
+  def initialize(code_elements, code_length)
+    generate_possible_codes(code_elements, code_length)
   end
 
   def make_guess
     @possible_codes.sample
   end
 
-  def generate_possible_codes(guess_elements, code_length)
-    @possible_codes = guess_elements.repeated_permutation(code_length).to_a
+  def generate_possible_codes(code_elements, code_length)
+    @possible_codes = code_elements.repeated_permutation(code_length).to_a
   end
 
   def eliminate_codes_producing_different_feedback(guess, feedback)

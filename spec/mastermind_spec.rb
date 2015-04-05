@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Mastermind do
   let(:default) { {
-    guess_elements: [:red, :green, :orange, :yellow, :blue, :purple],
+    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
     code_length: 4,
     max_turns: 10,
   } }
@@ -30,8 +30,8 @@ describe Mastermind do
 
     context 'when no parameters are given' do
 
-      it 'sets guess elements, max turns, code length to default values' do
-        expect(mastermind.guess_elements).to eq default[:guess_elements]
+      it 'sets code elements, code length, max turns to default values' do
+        expect(mastermind.code_elements).to eq default[:code_elements]
         expect(mastermind.code_length).to eq default[:code_length]
         expect(mastermind.max_turns).to eq default[:max_turns]
       end
@@ -39,15 +39,15 @@ describe Mastermind do
 
     context 'when given parameters' do
       let(:params) { {
-        guess_elements: [1, 2, 3],
+        code_elements: [1, 2, 3],
         code_length: 5,
         max_turns: 8,
       } }
       let(:mastermind_with_params) { Mastermind.new(params) }
       let(:mastermind_with_empty_params) { Mastermind.new(Hash.new) }
 
-      it 'sets guess elements, max turns, code length, and secret code to specified values' do
-        expect(mastermind_with_params.guess_elements).to eq params[:guess_elements]
+      it 'sets code elements, code length, max turns to specified values' do
+        expect(mastermind_with_params.code_elements).to eq params[:code_elements]
         expect(mastermind_with_params.code_length).to eq params[:code_length]
         expect(mastermind_with_params.max_turns).to eq params[:max_turns]
       end
@@ -55,7 +55,7 @@ describe Mastermind do
       context 'when any given attribute is not specified in parameters' do
 
         it 'reverts to default behavior in setting that attribute' do
-          expect(mastermind_with_empty_params.guess_elements).to eq default[:guess_elements]
+          expect(mastermind_with_empty_params.code_elements).to eq default[:code_elements]
           expect(mastermind_with_empty_params.code_length).to eq default[:code_length]
           expect(mastermind_with_empty_params.max_turns).to eq default[:max_turns]
         end
@@ -74,7 +74,7 @@ describe Mastermind do
 
     it 'checks if code is the correct length' do
       invalid_length_code = Array.new(
-        default[:code_length] - 1, default[:guess_elements].sample
+        default[:code_length] - 1, default[:code_elements].sample
       )
 
       expect(mastermind.code_valid?(example_code)).to eq true
