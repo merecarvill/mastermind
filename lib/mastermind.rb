@@ -15,14 +15,12 @@ class Mastermind
   end
 
   def new_game
-    @current_turn = 1
-
     @interface.display_instructions
 
     secret_code = @interface.solicit_code until code_valid?(secret_code)
     @guess_checker = GuessChecker.new(secret_code)
 
-    while @current_turn <= @max_turns
+    @max_turns.times do
       ai_guess = @ai.make_guess
       @interface.display_guess(ai_guess)
 
@@ -33,8 +31,7 @@ class Mastermind
         return
       end
 
-      @ai.eliminate_impossible_guesses(ai_guess, feedback)
-      @current_turn += 1
+      @ai.eliminate_codes_producing_different_feedback(ai_guess, feedback)
     end
 
     @interface.display_code_maker_won
@@ -45,9 +42,5 @@ class Mastermind
 
     valid_elements = code.reduce{ |bool, element| bool && @guess_elements.include?(element) }
     valid_elements && code.length == @code_length
-  end
-
-  def secret_code
-    @guess_checker.code
   end
 end

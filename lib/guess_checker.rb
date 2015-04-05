@@ -1,37 +1,40 @@
 class GuessChecker
-  attr_accessor :code
+  attr_reader :code
 
   def initialize(code)
     @code = code
   end
 
   def compare_to_code(guess)
-    feedback = {match: 0, close: 0, miss: 0}
-    element_frequencies = @code.frequencies
-    close_elements_or_misses = []
+    matching_elements = get_matches(guess)
+    num_matches = matching_elements.length
+    num_close = count_close_elements(guess, matching_elements)
+    num_misses = @code.length - num_matches - num_close
 
-    guess.length.times do |index|
-      guess_element = guess[index]
+    {match: num_matches, close: num_close, miss: num_misses}
+  end
+
+  def get_matches(guess)
+    matches = []
+    guess.each_with_index do |guess_element, index|
       code_element = @code[index]
+      matches << guess_element if guess_element == code_element
+    end
+    matches
+  end
 
-      if guess_element == code_element
-        feedback[:match] += 1
-        element_frequencies[code_element] -= 1
-      else
-        close_elements_or_misses << guess_element
+  def count_close_elements(guess, matching_elements)
+    guess_elements_minus_matches = guess.subtract_one_for_one(matching_elements)
+    code_elements_minus_matches = @code.subtract_one_for_one(matching_elements)
+    num_close = 0
+
+    guess_elements_minus_matches.each do |element|
+      if code_elements_minus_matches.include?(element)
+        num_close += 1
+        code_elements_minus_matches.delete_first(element)
       end
     end
-
-    close_elements_or_misses.each do |element|
-      if element_frequencies[element] > 0
-        feedback[:close] += 1
-        element_frequencies[element] -= 1
-      end
-    end
-
-    feedback[:miss] = guess.length - feedback[:match] - feedback[:close]
-
-    return feedback
+    num_close
   end
 
   def correct_feedback?(guess, feedback)

@@ -19,14 +19,11 @@ describe GuessChecker do
     end
 
     it 'returns a hash showing num elements in guess matching, close to, or absent from secret code' do
-      feedback_types = [:match, :close, :miss]
-      guess = [:foo, :foo, :bar, :baz]
+      feedback = checker.compare_to_code([])
 
-      feedback = checker.compare_to_code(guess)
-
-      feedback_types.each do |type|
-        expect(feedback.has_key?(type)).to be true
-      end
+      expect(feedback.has_key?(:match)).to be true
+      expect(feedback.has_key?(:close)).to be true
+      expect(feedback.has_key?(:miss)).to be true
     end
 
     it 'returns all matches if all elements in guess are in secret code and in correct position' do
@@ -92,6 +89,30 @@ describe GuessChecker do
 
       expect(checker.correct_feedback?(guess, correct_feedback)).to be true
       expect(checker.correct_feedback?(guess, incorrect_feedback)).to be false
+    end
+  end
+
+  describe '#get_matches' do
+
+    it 'returns the elements in a guess matching the element in the same position in the secret code' do
+      guess = [:blue, :blue, :red, :foo]
+      expect(checker.get_matches(guess)).to eq guess - [:foo]
+    end
+
+    it 'returns empty array if there are no matches' do
+      guess = [:foo, :foo, :foo, :foo]
+      expect(checker.get_matches(guess)).to eq []
+    end
+  end
+
+  describe '#count_close_elements' do
+
+    it 'counts the number of given elements present in the secret code, minus exact matches' do
+      # code: [:blue, :blue, :red, :green]
+      #       [CLOSE,  MATCH,  CLOSE,  CLOSE]
+      guess = [:green, :blue, :blue, :red]
+      matches = checker.get_matches(guess)
+      expect(checker.count_close_elements(guess, matches)).to eq 3
     end
   end
 end
