@@ -1,22 +1,22 @@
 class MastermindAI
-  attr_accessor :possible_guesses
+  attr_accessor :possible_codes
 
-  def initialize(guess_elements, guess_length)
-    generate_possible_guesses(guess_elements, guess_length)
+  def initialize(guess_elements, code_length)
+    generate_possible_codes(guess_elements, code_length)
   end
 
   def make_guess
-    @possible_guesses.sample
+    @possible_codes.sample
   end
 
-  def generate_possible_guesses(guess_elements, guess_length)
-    @possible_guesses = guess_elements.repeated_permutation(guess_length).to_a
+  def generate_possible_codes(guess_elements, code_length)
+    @possible_codes = guess_elements.repeated_permutation(code_length).to_a
   end
 
-  def eliminate_impossible_guesses(guess, feedback)
+  def eliminate_codes_producing_different_feedback(guess, feedback)
     checker = GuessChecker.new(guess)
-    @possible_guesses.reject! do |possible_guess|
-      checker.compare_to_code(possible_guess) != feedback
+    @possible_codes.select! do |code|
+      checker.compare_to_code(code) == feedback
     end
   end
 end
