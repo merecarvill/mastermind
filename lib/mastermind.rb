@@ -15,26 +15,42 @@ class Mastermind
   end
 
   def new_game
-    @interface.display_instructions
-
-    secret_code = @interface.solicit_code until code_valid?(secret_code)
-    @guess_checker = GuessChecker.new(secret_code)
+    set_up_game
 
     @max_turns.times do
-      ai_guess = @ai.make_guess
-      @interface.display_guess(ai_guess)
-
-      feedback = @interface.solicit_feedback until guess_checker.correct_feedback?(ai_guess, feedback)
-
-      if feedback[:match] == @code_length
+      ai_guess = make_and_show_guess_with_code_reminder
+      feedback = handle_feedback(ai_guess)
+      if code_guessed?(feedback)
         @interface.display_code_maker_lost
         return
       end
-
-      @ai.eliminate_codes_producing_different_feedback(ai_guess, feedback)
     end
 
     @interface.display_code_maker_won
+  end
+
+  def set_up_game
+    @interface.display_instructions
+    secret_code = @interface.solicit_code until code_valid?(secret_code)
+    @guess_checker = GuessChecker.new(secret_code)
+    @secret_code = secret_code
+  end
+
+  def make_and_show_guess_with_code_reminder
+    ai_guess = @ai.make_guess
+    @interface.display_guess(ai_guess)
+    @interface.display_code_reminder(@secret_code)
+    return ai_guess
+  end
+
+  def handle_feedback(ai_guess)
+    feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
+    @ai.eliminate_codes_producing_different_feedback(ai_guess, feedback)
+    return feedback
+  end
+
+  def code_guessed?(feedback)
+    feedback[:match] == @code_length
   end
 
   def code_valid?(code)
