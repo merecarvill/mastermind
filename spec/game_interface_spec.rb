@@ -36,16 +36,16 @@ describe GameInterface do
       interface.display_instructions
     end
 
-    it 'prints instructions' do
+    it 'prints the game instructions' do
       expect($stdout.string).not_to eq ""
     end
 
     it 'includes the guess elements in the instructions' do
-      expect($stdout.string.include?(default[:code_elements].join(", "))).to eq true
+      expect($stdout.string.include?(default[:code_elements].join(", "))).to be true
     end
 
     it 'includes the code length in the instructions' do
-      expect($stdout.string.include?(default[:code_length].to_s)).to eq true
+      expect($stdout.string.include?(default[:code_length].to_s)).to be true
     end
   end
 
@@ -64,28 +64,38 @@ describe GameInterface do
   end
 
   describe '#display_guess' do
-
-    it 'prints a given guess, including mention of "guess" and "computer"' do
+    before do
       interface.display_guess(example_code)
+    end
+
+    it 'prints a given guess, including all guess elements' do
       expect($stdout.string).not_to eq ""
-      expect($stdout.string.include?("computer")).to be true
-      expect($stdout.string.include?("guess")).to be true
       example_code.each do |element|
         expect($stdout.string.include?(element.to_s)).to be true
       end
     end
+
+    it 'at least mentions "computer" and "guess"' do
+      expect($stdout.string.include?("computer")).to be true
+      expect($stdout.string.include?("guess")).to be true
+    end
   end
 
   describe '#display_code_reminder' do
-
-    it 'prints a reminder of the given secret code, including mention of "your" and "code"' do
+    before do
       interface.display_code_reminder(example_code)
+    end
+
+    it 'prints a reminder of the given secret code, including all code elements' do
       expect($stdout.string).not_to eq ""
-      expect($stdout.string.include?("your")).to be true
-      expect($stdout.string.include?("code")).to be true
       example_code.each do |element|
         expect($stdout.string.include?(element.to_s)).to be true
       end
+    end
+
+    it 'at least mentions "your" and "code"' do
+      expect($stdout.string.include?("your")).to be true
+      expect($stdout.string.include?("code")).to be true
     end
   end
 
@@ -104,18 +114,32 @@ describe GameInterface do
   end
 
   describe '#display_code_maker_won' do
+    before do
+      interface.display_code_maker_won
+    end
 
     it 'prints a message telling the player they won' do
-      interface.display_code_maker_won
       expect($stdout.string).not_to eq ""
+    end
+
+    it 'at least mentions "you" and "won"' do
+      expect($stdout.string.include?("you")).to be true
+      expect($stdout.string.include?("win")).to be true
     end
   end
 
   describe '#display_code_maker_lost' do
+    before do
+      interface.display_code_maker_lost
+    end
 
     it 'prints a message telling the player they lost' do
-      interface.display_code_maker_lost
       expect($stdout.string).not_to eq ""
+    end
+
+    it 'at least mentions "you" and "lose"' do
+      expect($stdout.string.include?("you")).to be true
+      expect($stdout.string.include?("lose")).to be true
     end
   end
 end

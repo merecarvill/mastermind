@@ -56,8 +56,9 @@ only one 'close'. Each of the remaining elements count as a 'miss'."
     puts "For example, if a guess had 1 match, 3 close, 0 misses, you should type '1 3 0'"
 
     input = STDIN.gets.strip
+    parsed_input = input.split(" ").map{ |c| c.to_i }
     labels = [:match, :close, :miss]
-    Hash[labels.zip(input.split(" ").map{ |c| c.to_i })]
+    Hash[labels.zip(parsed_input)]
   end
 
   def display_code_maker_won
