@@ -1,7 +1,6 @@
 require_relative 'game_interface'
 require_relative 'guess_checker'
 require_relative 'mastermind_ai'
-require_relative 'core_extensions'
 
 class Mastermind
   attr_reader :ai, :interface, :code_elements, :code_length, :max_turns
@@ -20,14 +19,16 @@ class Mastermind
   end
 
   def set_up_game
+    @interface.clear_screen
     @interface.display_instructions
-    secret_code = @interface.solicit_code until code_valid?(secret_code)
-    @guess_checker = GuessChecker.new(secret_code)
-    @secret_code = secret_code
+
+    @secret_code = @interface.solicit_code until code_valid?(secret_code)
+    @guess_checker = GuessChecker.new(@secret_code)
   end
 
   def run_game
     @max_turns.times do
+      @interface.clear_screen
       ai_guess = make_and_show_guess_with_code_reminder
       feedback = handle_feedback(ai_guess)
       if code_guessed?(feedback)
@@ -47,7 +48,7 @@ class Mastermind
 
   def handle_feedback(ai_guess)
     feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
-    @ai.eliminate_codes_producing_different_feedback(ai_guess, feedback)
+    @ai.receive_feedback(feedback)
     return feedback
   end
 
@@ -57,7 +58,6 @@ class Mastermind
 
   def code_valid?(code)
     return false if code == nil
-
     code.length == @code_length && code.reduce{ |bool, element| bool && @code_elements.include?(element) }
   end
 end
