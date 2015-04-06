@@ -8,6 +8,7 @@ class GameInterface
     puts
     puts "The name of the game is Mastermind."
     puts
+    puts "===== INSTRUCTIONS ====="
     puts "You must think of a #{@code_length}-element-long code derived from the following \
 elements: " + @code_elements.join(", ")
     puts "Your guess can contain duplicate elements."
@@ -27,7 +28,7 @@ be an equivalent number of that type of element in the code, otherwise each extr
 counted as a 'miss'."
     puts "eg: A code of 'blue foo foo foo' and a guess of 'bar blue blue blue' would yeild \
 only one 'close'. Each of the remaining elements count as a 'miss'."
-    puts
+    puts 
   end
 
   def solicit_code

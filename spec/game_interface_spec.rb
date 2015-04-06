@@ -3,8 +3,11 @@ require 'spec_helper'
 describe GameInterface do
   include_context 'default_values'
   
-  before do
+  before :all do
     $stdout = StringIO.new
+  end
+  before :each do
+    $stdout.flush
   end
   after :all do
     $stdout = STDOUT
@@ -32,6 +35,7 @@ describe GameInterface do
 
     it 'prints the game instructions' do
       expect($stdout.string).not_to eq ""
+      expect($stdout.string.downcase.include?("instructions")).to be true
     end
 
     it 'includes the guess elements in the instructions' do
