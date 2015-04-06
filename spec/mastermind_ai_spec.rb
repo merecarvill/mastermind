@@ -43,24 +43,19 @@ describe MastermindAI do
   end
 
   describe '#generate_possible_codes' do
+    let(:elements) { [0, 1] }
+    let(:length) { 2 }
+    let(:expected_output) { [[1, 1], [1, 0], [0, 1], [0, 0]] }
 
     it 'takes the guess elements and code length' do
-      elements = [0, 1]
-      length = 2
-
       expect{ai.generate_possible_codes(elements, length)}.to_not raise_error
     end
 
     it 'stores all possible codes in an instance variable' do
-      elements = [0, 1]
-      length = 2
-      expected_output =[[1, 1], [1, 0], [0, 1], [0, 0]]
       ai.generate_possible_codes(elements, length)
 
       expect(ai.possible_codes.length).to eq expected_output.length
-      expected_output.each do |guess|
-        expect(ai.possible_codes.include?(guess)).to be true
-      end
+      expect(ai.possible_codes).to match_array expected_output
     end
   end
 

@@ -2,6 +2,16 @@ require 'spec_helper'
 
 describe Mastermind do
   include_context 'default_values'
+
+  before :all do
+    $stdout = StringIO.new
+  end
+  before :each do
+    $stdout.flush
+  end
+  after :all do
+    $stdout = STDOUT
+  end
   
   let(:example_code) { [:blue, :blue, :red, :green] }
   let(:mastermind) { Mastermind.new }
@@ -62,20 +72,38 @@ describe Mastermind do
 
   describe '#code_valid?' do
 
-    it 'checks if each of the given code\'s elements are valid' do
-      invalid_elements_code = Array.new(default[:code_length], :foo)
-
+    it 'returns true if the given code is the correct length and each of the elements are valid' do
       expect(mastermind.code_valid?(example_code)).to be true
-      expect(mastermind.code_valid?(invalid_elements_code)).to be false
     end
 
-    it 'checks if code is the correct length' do
-      invalid_length_code = Array.new(
+    it 'returns false if code is an incorrect length' do
+      too_short_code = Array.new(
         default[:code_length] - 1, default[:code_elements].sample
       )
+      too_long_code = Array.new(
+        default[:code_length] + 1, default[:code_elements].sample
+      )
 
-      expect(mastermind.code_valid?(example_code)).to be true
-      expect(mastermind.code_valid?(invalid_length_code)).to be false
+      expect(mastermind.code_valid?(too_short_code)).to be false
+      expect(mastermind.code_valid?(too_long_code)).to be false
+    end
+
+    it 'returns false if any of the given code\'s elements are invalid' do
+      invalid_elements_code = Array.new(default[:code_length], :foo)
+      expect(mastermind.code_valid?(invalid_elements_code)).to be false
+    end
+  end
+
+  describe '#code_guessed?' do
+
+    it 'returns true if given feedback has all matches, indicating the code was sucessfully guessed' do
+      correct_guess_feedback = {match: default[:code_length], close: 0, miss: 0}
+      expect(mastermind.code_guessed?(correct_guess_feedback)).to be true
+    end
+
+    it 'returns false if given feedback that is not all matches' do
+      incorrect_guess_feedback = {match: 1, close: 3, miss: 0}
+      expect(mastermind.code_guessed?(incorrect_guess_feedback)).to be false
     end
   end
 end

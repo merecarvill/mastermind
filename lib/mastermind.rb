@@ -3,7 +3,7 @@ require_relative 'guess_checker'
 require_relative 'mastermind_ai'
 
 class Mastermind
-  attr_reader :ai, :interface, :code_elements, :code_length, :max_turns
+  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns
 
   def initialize(params = {})
     @code_elements = params[:code_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
@@ -22,7 +22,7 @@ class Mastermind
     @interface.clear_screen
     @interface.display_instructions
 
-    @secret_code = @interface.solicit_code until code_valid?(secret_code)
+    @secret_code = @interface.solicit_code until code_valid?(@secret_code)
     @guess_checker = GuessChecker.new(@secret_code)
   end
 
@@ -30,7 +30,7 @@ class Mastermind
     @max_turns.times do
       @interface.clear_screen
       ai_guess = make_and_show_guess_with_code_reminder
-      feedback = handle_feedback(ai_guess)
+      feedback = get_feedback_and_pass_it_to_ai(ai_guess)
       if code_guessed?(feedback)
         @interface.display_code_maker_lost
         return
@@ -46,7 +46,7 @@ class Mastermind
     return ai_guess
   end
 
-  def handle_feedback(ai_guess)
+  def get_feedback_and_pass_it_to_ai(ai_guess)
     feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
     @ai.receive_feedback(feedback)
     return feedback
