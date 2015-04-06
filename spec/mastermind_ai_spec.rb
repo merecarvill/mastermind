@@ -1,11 +1,8 @@
 require 'spec_helper'
 
 describe MastermindAI do
-  let(:default) { {
-    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
-    code_length: 4,
-    max_turns: 10,
-  } }
+  include_context 'default_values'
+  
   let(:ai) { MastermindAI.new(default[:code_elements], default[:code_length]) }
 
   describe '#initialize' do
@@ -23,7 +20,7 @@ describe MastermindAI do
 
     it 'returns a guess from the set of possible codes' do
       guess = ai.make_guess
-      expect(ai.possible_codes.include?(guess)).to eq true
+      expect(ai.possible_codes.include?(guess)).to be true
     end
   end
 
@@ -62,7 +59,7 @@ describe MastermindAI do
 
       expect(ai.possible_codes.length).to eq expected_output.length
       expected_output.each do |guess|
-        expect(ai.possible_codes.include?(guess)).to eq true
+        expect(ai.possible_codes.include?(guess)).to be true
       end
     end
   end

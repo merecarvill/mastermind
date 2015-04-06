@@ -1,19 +1,15 @@
 require 'spec_helper'
 
 describe GameInterface do
+  include_context 'default_values'
+  
   before do
     $stdout = StringIO.new
   end
-
   after :all do
     $stdout = STDOUT
   end
 
-  let(:default) { {
-    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
-    code_length: 4,
-    max_turns: 10,
-  } }
   let(:example_code) { [:blue, :blue, :red, :green] }
   let(:example_code_input) { "blue blue red green" }
   let(:interface) { GameInterface.new(default[:code_elements], default[:code_length]) }

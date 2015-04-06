@@ -1,11 +1,8 @@
 require 'spec_helper'
 
 describe Mastermind do
-  let(:default) { {
-    code_elements: [:red, :green, :orange, :yellow, :blue, :purple],
-    code_length: 4,
-    max_turns: 10,
-  } }
+  include_context 'default_values'
+  
   let(:example_code) { [:blue, :blue, :red, :green] }
   let(:mastermind) { Mastermind.new }
 
@@ -68,8 +65,8 @@ describe Mastermind do
     it 'checks if each of the given code\'s elements are valid' do
       invalid_elements_code = Array.new(default[:code_length], :foo)
 
-      expect(mastermind.code_valid?(example_code)).to eq true
-      expect(mastermind.code_valid?(invalid_elements_code)).to eq false
+      expect(mastermind.code_valid?(example_code)).to be true
+      expect(mastermind.code_valid?(invalid_elements_code)).to be false
     end
 
     it 'checks if code is the correct length' do
@@ -77,8 +74,8 @@ describe Mastermind do
         default[:code_length] - 1, default[:code_elements].sample
       )
 
-      expect(mastermind.code_valid?(example_code)).to eq true
-      expect(mastermind.code_valid?(invalid_length_code)).to eq false
+      expect(mastermind.code_valid?(example_code)).to be true
+      expect(mastermind.code_valid?(invalid_length_code)).to be false
     end
   end
 end
