@@ -77,12 +77,12 @@ describe GuessChecker do
     it 'gives precedence to counting matches over close elements' do
       # code: [:blue, :blue, :red, :green]
       #       [MISS,  MISS,  MISS,  MATCH]
-      guess = [:foo, :foo, :green, :green]
+      guess = [:foo, :blue, :blue, :blue]
       feedback = checker.compare_to_code(guess)
 
       expect(feedback[:match]).to eq 1
-      expect(feedback[:close]).to eq 0
-      expect(feedback[:miss]).to eq guess.length - 1
+      expect(feedback[:close]).to eq 1
+      expect(feedback[:miss]).to eq guess.length - 2
     end
   end
 
