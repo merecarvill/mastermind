@@ -10,7 +10,7 @@ class Mastermind
     @max_turns = params[:max_turns] ||= 10
     @code_length = params[:code_length] ||= 4
     @ai = MastermindAI.new(@code_elements, @code_length)
-    @interface = GameInterface.new(@code_elements, @code_length)
+    @interface = GameInterface.new(@code_elements, @code_length, STDIN, STDOUT)
   end
 
   def new_game

@@ -38,9 +38,9 @@ describe Mastermind do
     context 'when no parameters are given' do
 
       it 'sets code elements, code length, max turns to default values' do
-        expect(mastermind.code_elements).to eq default[:code_elements]
-        expect(mastermind.code_length).to eq default[:code_length]
-        expect(mastermind.max_turns).to eq default[:max_turns]
+        expect(mastermind.code_elements).to eq @default_code_elements
+        expect(mastermind.code_length).to eq @default_code_length
+        expect(mastermind.max_turns).to eq @default_max_turns
       end
     end
 
@@ -62,9 +62,9 @@ describe Mastermind do
       context 'when any given attribute is not specified in parameters' do
 
         it 'reverts to default behavior in setting that attribute' do
-          expect(mastermind_with_empty_params.code_elements).to eq default[:code_elements]
-          expect(mastermind_with_empty_params.code_length).to eq default[:code_length]
-          expect(mastermind_with_empty_params.max_turns).to eq default[:max_turns]
+          expect(mastermind_with_empty_params.code_elements).to eq @default_code_elements
+          expect(mastermind_with_empty_params.code_length).to eq @default_code_length
+          expect(mastermind_with_empty_params.max_turns).to eq @default_max_turns
         end
       end
     end
@@ -78,10 +78,10 @@ describe Mastermind do
 
     it 'returns false if code is an incorrect length' do
       too_short_code = Array.new(
-        default[:code_length] - 1, default[:code_elements].sample
+        @default_code_length - 1, @default_code_elements.sample
       )
       too_long_code = Array.new(
-        default[:code_length] + 1, default[:code_elements].sample
+        @default_code_length + 1, @default_code_elements.sample
       )
 
       expect(mastermind.code_valid?(too_short_code)).to be false
@@ -89,7 +89,7 @@ describe Mastermind do
     end
 
     it 'returns false if any of the given code\'s elements are invalid' do
-      invalid_elements_code = Array.new(default[:code_length], :foo)
+      invalid_elements_code = Array.new(@default_code_length, :foo)
       expect(mastermind.code_valid?(invalid_elements_code)).to be false
     end
   end
@@ -97,7 +97,7 @@ describe Mastermind do
   describe '#code_guessed?' do
 
     it 'returns true if given feedback has all matches, indicating the code was sucessfully guessed' do
-      correct_guess_feedback = {match: default[:code_length], close: 0, miss: 0}
+      correct_guess_feedback = {match: @default_code_length, close: 0, miss: 0}
       expect(mastermind.code_guessed?(correct_guess_feedback)).to be true
     end
 

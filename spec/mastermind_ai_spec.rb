@@ -3,7 +3,7 @@ require 'spec_helper'
 describe MastermindAI do
   include_context 'default_values'
   
-  let(:ai) { MastermindAI.new(default[:code_elements], default[:code_length]) }
+  let(:ai) { MastermindAI.new(@default_code_elements, @default_code_length) }
 
   describe '#initialize' do
 
@@ -83,8 +83,8 @@ describe MastermindAI do
       end
 
       # given the guess and the code, a code of all the same element is impossible
-      default[:code_elements].each do |code_element|
-        all_same_code = Array.new(default[:code_length], code_element)
+      @default_code_elements.each do |code_element|
+        all_same_code = Array.new(@default_code_length, code_element)
         expect(ai.possible_codes.include?(all_same_code)).to be false
       end
     end
