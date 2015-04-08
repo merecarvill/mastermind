@@ -3,7 +3,7 @@ require_relative 'guess_checker'
 require_relative 'mastermind_ai'
 
 class Mastermind
-  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns
+  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns, :secret_code
 
   def initialize(params = {})
     @code_elements = params[:code_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
