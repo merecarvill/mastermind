@@ -33,11 +33,11 @@ class GameInterface
   def solicit_feedback
     @output_stream.puts @game_text[:solicit_feedback]
 
-    feedback = Hash.new
-    feedback[:match] = solicit_feedback_aspect(:match)
-    feedback[:close] = solicit_feedback_aspect(:close)
-    feedback[:miss] = solicit_feedback_aspect(:miss)
-    return feedback
+    num_matches = solicit_feedback_aspect(:match)
+    num_close = solicit_feedback_aspect(:close)
+    num_misses = solicit_feedback_aspect(:miss)
+
+    {match: num_matches, close: num_close, miss: num_misses}
   end
 
   def solicit_feedback_aspect(aspect)
