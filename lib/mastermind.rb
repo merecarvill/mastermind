@@ -1,4 +1,4 @@
-require_relative 'game_interface'
+require_relative 'mastermind_interface'
 require_relative 'guess_checker'
 require_relative 'mastermind_ai'
 
@@ -10,7 +10,7 @@ class Mastermind
     @max_turns = params[:max_turns] ||= 10
     @code_length = params[:code_length] ||= 4
     @ai = MastermindAI.new(@code_elements, @code_length)
-    @interface = GameInterface.new(@code_elements, @code_length, STDIN, STDOUT)
+    @interface = MastermindInterface.new(@code_elements, @code_length, STDIN, STDOUT)
   end
 
   def new_game
@@ -22,12 +22,12 @@ class Mastermind
     @interface.clear_screen
     @interface.display_instructions
 
-    @secret_code = get_valid_code_from_player
+    set_secret_code_to_valid_code_from_player
     @guess_checker = GuessChecker.new(@secret_code)
   end
 
-  def get_valid_code_from_player
-    @interface.solicit_code until code_valid?(@secret_code)
+  def set_secret_code_to_valid_code_from_player
+    @secret_code = @interface.solicit_code until code_valid?(@secret_code)
   end
 
   def run_game
@@ -47,7 +47,7 @@ class Mastermind
       ai_guess = @ai.make_guess
       display_guess_with_secret_code_reminder(ai_guess)
 
-      feedback = get_valid_feedback_for(ai_guess)
+      feedback = get_valid_feedback_for_guess(ai_guess)
       @ai.receive_feedback(feedback)
       return feedback
   end
@@ -57,8 +57,9 @@ class Mastermind
     @interface.display_code_reminder(@secret_code)
   end
 
-  def get_valid_feedback_for(ai_guess)
-    @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
+  def get_valid_feedback_for_guess(ai_guess)
+    feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
+    return feedback
   end
 
   def code_guessed?(feedback)
