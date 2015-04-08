@@ -1,4 +1,4 @@
-class GameInterface
+class MastermindInterface
   attr_reader :game_text
 
   def initialize(code_elements, code_length, input_stream, output_stream)
