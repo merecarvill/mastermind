@@ -1,6 +1,12 @@
 require 'rubygems'
+require 'factory_girl'
 
 require_relative '../lib/mastermind'
+require_relative './factories/mastermind'
+
+RSpec.configure do |config|
+  config.include FactoryGirl::Syntax::Methods
+end
 
 shared_context 'default_values' do
   before :all do
