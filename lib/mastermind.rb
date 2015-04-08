@@ -22,15 +22,19 @@ class Mastermind
     @interface.clear_screen
     @interface.display_instructions
 
-    @secret_code = @interface.solicit_code until code_valid?(@secret_code)
+    @secret_code = get_valid_code_from_player
     @guess_checker = GuessChecker.new(@secret_code)
+  end
+
+  def get_valid_code_from_player
+    @interface.solicit_code until code_valid?(@secret_code)
   end
 
   def run_game
     @max_turns.times do
       @interface.clear_screen
-      ai_guess = make_and_show_guess_with_code_reminder
-      feedback = get_feedback_and_pass_it_to_ai(ai_guess)
+
+      feedback = handle_one_turn
       if code_guessed?(feedback)
         @interface.display_code_maker_lost
         return
@@ -39,17 +43,22 @@ class Mastermind
     @interface.display_code_maker_won
   end
 
-  def make_and_show_guess_with_code_reminder
-    ai_guess = @ai.make_guess
-    @interface.display_guess(ai_guess)
-    @interface.display_code_reminder(@secret_code)
-    return ai_guess
+  def handle_one_turn
+      ai_guess = @ai.make_guess
+      display_guess_with_secret_code_reminder(ai_guess)
+
+      feedback = get_valid_feedback_for(ai_guess)
+      @ai.receive_feedback(feedback)
+      return feedback
   end
 
-  def get_feedback_and_pass_it_to_ai(ai_guess)
-    feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
-    @ai.receive_feedback(feedback)
-    return feedback
+  def display_guess_with_secret_code_reminder(ai_guess)
+    @interface.display_guess(ai_guess)
+    @interface.display_code_reminder(@secret_code)
+  end
+
+  def get_valid_feedback_for(ai_guess)
+    @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
   end
 
   def code_guessed?(feedback)
