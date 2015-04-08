@@ -9,6 +9,9 @@ describe GameInterface do
   before :all do
     @input_stream = StringIO.new
     @output_stream = StringIO.new
+  end
+
+  before do
     @interface = GameInterface.new(@default_code_elements, @default_code_length, @input_stream, @output_stream)
   end
 
@@ -30,7 +33,7 @@ describe GameInterface do
     end
 
     it 'prints the game instructions' do
-      expect(@output_stream.string).to eq @interface.text_for(:display_instructions)
+      expect(@output_stream.string).to eq @interface.game_text[:display_instructions]
     end
   end
 
@@ -41,7 +44,7 @@ describe GameInterface do
 
     it 'prints a message soliciting the player\'s secret code' do
       @interface.solicit_code
-      expect(@output_stream.string).to eq @interface.text_for(:solicit_code)
+      expect(@output_stream.string).to eq @interface.game_text[:solicit_code]
     end
 
     it 'returns the code given by the player' do
@@ -54,16 +57,9 @@ describe GameInterface do
       @interface.display_guess(example_code)
     end
 
-    it 'prints a given guess, including all guess elements' do
-      expect(@output_stream.string).not_to eq ""
-      example_code.each do |element|
-        expect(@output_stream.string.include?(element.to_s)).to be true
-      end
-    end
-
-    it 'at least mentions "computer" and "guess"' do
-      expect(@output_stream.string.include?("computer")).to be true
-      expect(@output_stream.string.include?("guess")).to be true
+    it 'prints a given guess' do
+      text = @interface.game_text[:display_guess] + @interface.code_to_s(example_code) + "\n"
+      expect(@output_stream.string).to eq text
     end
   end
 
@@ -73,10 +69,8 @@ describe GameInterface do
     end
 
     it 'prints a reminder of the given secret code, including all code elements' do
-      expect(@output_stream.string.start_with?(@interface.text_for(:display_code_reminder))).to be true
-      example_code.each do |element|
-        expect(@output_stream.string.include?(element.to_s)).to be true
-      end
+      text = @interface.game_text[:display_code_reminder] + @interface.code_to_s(example_code) + "\n"
+      expect(@output_stream.string).to eq text
     end
   end
 
@@ -88,8 +82,10 @@ describe GameInterface do
     end
 
     it 'prints a message soliciting feedback on a guess' do
+      starting_text = @interface.game_text[:solicit_feedback]
+
       @interface.solicit_feedback
-      expect(@output_stream.string.start_with?(@interface.text_for(:solicit_feedback))).to be true
+      expect(@output_stream.string.start_with?(starting_text)).to be true
     end
 
     it 'returns a feedback hash made from string input by the player' do
@@ -100,11 +96,22 @@ describe GameInterface do
   describe '#solicit_feedback_aspect' do
     let(:aspects) { [:match, :close, :miss] }
 
-    it 'prints a prompt asking player to input the given aspect of feedback' do
+    before do
       @input_stream.string = "2"
+    end
+
+    it 'prints a prompt asking player to input the given aspect of feedback' do
+      starting_text = @interface.game_text[:solicit_feedback_aspect]
 
       @interface.solicit_feedback_aspect(:foo)
-      expect(@output_stream.string).not_to eq ""
+      expect(@output_stream.string.start_with?(starting_text)).to be true
+    end
+
+    it 'includes the aspect solicited in the prompt' do
+      aspect = aspects.sample
+
+      @interface.solicit_feedback_aspect(aspect)
+      expect(@output_stream.string.include?(aspect.to_s)).to be true
     end
 
     it 'specifies the aspect solicited in the message' do
@@ -117,8 +124,6 @@ describe GameInterface do
     end
 
     it 'returns player input in integer form' do
-      @input_stream.string = "2"
-
       player_input = @interface.solicit_feedback_aspect(:foo)
       expect(player_input).to eq 2
     end
@@ -144,7 +149,7 @@ describe GameInterface do
     end
 
     it 'prints a message telling the player they won' do
-      expect(@output_stream.string).to eq @interface.text_for(:display_code_maker_won)
+      expect(@output_stream.string).to eq @interface.game_text[:display_code_maker_won] + "\n"
     end
   end
 
@@ -154,7 +159,7 @@ describe GameInterface do
     end
 
     it 'prints a message telling the player they lost' do
-      expect(@output_stream.string).to eq @interface.text_for(:display_code_maker_lost)
+      expect(@output_stream.string).to eq @interface.game_text[:display_code_maker_lost] + "\n"
     end
   end
 end

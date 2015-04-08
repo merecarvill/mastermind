@@ -1,4 +1,6 @@
 class GameInterface
+  attr_reader :game_text
+
   def initialize(code_elements, code_length, input_stream, output_stream)
     @input_stream = input_stream
     @output_stream = output_stream
@@ -6,22 +8,22 @@ class GameInterface
   end
 
   def display_instructions
-    @output_stream.puts text_for(:display_instructions)
+    @output_stream.puts @game_text[:display_instructions]
   end
 
   def solicit_code
-    @output_stream.puts text_for(:solicit_code)
+    @output_stream.puts @game_text[:solicit_code]
 
     input = @input_stream.gets.strip
     input.split(" ").map{ |c| c.to_sym }
   end
 
   def display_guess(code)
-    @output_stream.puts ["", "The computer's guess is: " + code_to_s(code)]
+    @output_stream.puts @game_text[:display_guess] + code_to_s(code)
   end
 
   def display_code_reminder(code)
-    @output_stream.puts text_for(:display_code_reminder) + code_to_s(code)
+    @output_stream.puts @game_text[:display_code_reminder] + code_to_s(code)
   end
 
   def code_to_s(code)
@@ -29,7 +31,7 @@ class GameInterface
   end
 
   def solicit_feedback
-    @output_stream.puts text_for(:solicit_feedback)
+    @output_stream.puts @game_text[:solicit_feedback]
 
     feedback = Hash.new
     feedback[:match] = solicit_feedback_aspect(:match)
@@ -40,65 +42,58 @@ class GameInterface
 
   def solicit_feedback_aspect(aspect)
     grammatical_insert = aspect == :close ? "" : "a "
-    @output_stream.print "How many elements were #{grammatical_insert + aspect.to_s}? "
+    @output_stream.print @game_text[:solicit_feedback_aspect] + grammatical_insert + aspect.to_s + "? "
     return @input_stream.gets.strip.to_i
   end
 
   def display_code_maker_won
-    @output_stream.puts text_for(:display_code_maker_won)
+    @output_stream.puts @game_text[:display_code_maker_won]
   end
 
   def display_code_maker_lost
-    @output_stream.puts text_for(:display_code_maker_lost)
+    @output_stream.puts @game_text[:display_code_maker_lost]
   end
 
   def clear_screen
     system("cls")
     system("clear")
   end
-
-  def text_for(method)
-    @game_text[method.to_sym]
-  end
-
+  
   def generate_game_text(code_elements, code_length)
     game_text = Hash.new 
     game_text[:display_instructions] = <<-eos
 The name of the game is Mastermind.
 
 ===== INSTRUCTIONS =====
-You must think of a #{code_length}-element-long code derived from the following elements: #{code_elements.join(", ")}
+You must think of a #{code_length}-element-long code derived from the following elements:
+#{code_elements.join(", ")}
 Your guess can contain duplicate elements.
 
-When asked, you will enter that code and the computer will make several attempts to guess it. You will be asked to provide feedback on each guess, identifying the number of matches, close elements, and misses.
+When asked, you will enter that code and the computer will make several attempts to guess it. 
+You will be asked to provide feedback on each guess, identifying the number of matches, close 
+elements, and misses.
 
 A 'match' is an element in a guess that exists in your code and is in the correct position.
 A 'close' element exists in your code, but in a different position than where it occurs in the guess.
 A 'miss' is an element in a guess that does not occur in your code.
 
-Note that for there to be multiple 'close' elements of the same kind, there must be an equivalent number of that type of element in the code, otherwise each extra should be counted as a 'miss'.
-eg: A code of 'blue foo foo foo' and a guess of 'bar blue blue blue' would yeild only one 'close'. Each of the remaining elements count as a 'miss'.
+Note that for there to be multiple 'close' elements of the same kind, there must be an equivalent 
+number of that type of element in the code, otherwise each extra should be counted as a 'miss'.
+eg: A code of 'blue foo foo foo' and a guess of 'bar blue blue blue' would yeild only one 'close'. 
+Each of the remaining elements count as a 'miss'.
 
 eos
     game_text[:solicit_code] = <<-eos
-Please enter your code, like so: '1st_element 2nd_element ... nth_element'
-
+Please enter your code. Separate elements with spaces, like so: 
+1st_element 2nd_element ... nth_element
 eos
-    game_text[:display_code_reminder] = <<-eos
-Remember, your code was: 
-eos
-    game_text[:solicit_feedback] = <<-eos
-
-Please input feedback on the most recent guess.
-eos
-    game_text[:display_code_maker_won] = <<-eos
-
-Your code wasn't guessed, so you win!
-eos
-    game_text[:display_code_maker_lost] = <<-eos
-
-Your code was guessed, so you lose! There's always next time.
-eos
+    game_text[:display_guess] = "The computer's guess is: "
+    game_text[:display_code_reminder] = "Remember, your code was: "
+    game_text[:solicit_feedback] = 
+      "\n" + "Input your feedback on the most recent guess (in numeral form, please)."
+    game_text[:solicit_feedback_aspect] = "How many elements were "
+    game_text[:display_code_maker_won] = "\n" + "Your code wasn't guessed in time, so you win!"
+    game_text[:display_code_maker_lost] = "\n" + "Your code was guessed, so you lose!"
     return game_text
   end
 end
