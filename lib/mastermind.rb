@@ -3,7 +3,7 @@ require_relative 'guess_checker'
 require_relative 'mastermind_ai'
 
 class Mastermind
-  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns, :secret_code
+  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns
 
   def initialize(params = {})
     @code_elements = params[:code_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
@@ -22,20 +22,20 @@ class Mastermind
     @interface.clear_screen
     @interface.display_instructions
 
-    set_secret_code_to_valid_code_from_player
-    @guess_checker = GuessChecker.new(@secret_code)
+    init_guess_checker_with_valid_code_from_player
   end
 
-  def set_secret_code_to_valid_code_from_player
-    @secret_code = @interface.solicit_code until code_valid?(@secret_code)
+  def init_guess_checker_with_valid_code_from_player
+    secret_code = @interface.solicit_code until code_valid?(secret_code)
+    @guess_checker = GuessChecker.new(secret_code)
   end
 
   def run_game
     @max_turns.times do
       @interface.clear_screen
+      handle_one_turn
 
-      feedback = handle_one_turn
-      if code_guessed?(feedback)
+      if code_guessed?(@ai.last_feedback_received)
         @interface.display_code_maker_lost
         return
       end
@@ -44,21 +44,21 @@ class Mastermind
   end
 
   def handle_one_turn
-      ai_guess = @ai.make_guess
-      display_guess_with_secret_code_reminder(ai_guess)
+      @ai.make_guess
+      display_guess_with_secret_code_reminder(@ai.last_guess_made)
 
-      feedback = get_valid_feedback_for_guess(ai_guess)
-      @ai.receive_feedback(feedback)
-      return feedback
+      correct_feedback = @guess_checker.compare_to_code(@ai.last_guess_made)
+      player_feedback = get_correct_feedback_from_player(correct_feedback)
+      @ai.receive_feedback(player_feedback)
   end
 
   def display_guess_with_secret_code_reminder(ai_guess)
     @interface.display_guess(ai_guess)
-    @interface.display_code_reminder(@secret_code)
+    @interface.display_code_reminder(@guess_checker.code)
   end
 
-  def get_valid_feedback_for_guess(ai_guess)
-    feedback = @interface.solicit_feedback until @guess_checker.correct_feedback?(ai_guess, feedback)
+  def get_correct_feedback_from_player(correct_feedback)
+    feedback = @interface.solicit_feedback until feedback == correct_feedback
     return feedback
   end
 

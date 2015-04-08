@@ -70,8 +70,10 @@ describe Mastermind do
   end
 
   describe '#display_guess_with_secret_code_reminder' do
+    let(:mastermind) { 
+      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(example_code)) 
+    }
     before do
-      mastermind.secret_code = example_code
       mastermind.display_guess_with_secret_code_reminder(random_guess)
     end
 
@@ -82,44 +84,44 @@ describe Mastermind do
     end
 
     it 'displays the game\'s secret code' do
-      example_code.each do |element|
+      mastermind.guess_checker.code.each do |element|
         expect(@output_stream.string.include?(element.to_s))
       end
     end
   end
 
-  describe '#get_valid_feedback_for_guess' do
+  describe '#get_correct_feedback_from_player' do
     let(:mastermind) { 
       build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(example_code)) 
     }
-    let(:feedback) { mastermind.guess_checker.compare_to_code(random_guess) }
+    let(:correct_feedback) { mastermind.guess_checker.compare_to_code(random_guess) }
 
-    context 'when player input is the correct feedback for given guess' do
-      let(:correct_feedback_input) { feedback.map{ |key, value| value.to_s } }
+    context 'when player input results in feedback equal to given comparison feedback' do
+      let(:correct_feedback_input) { correct_feedback.map{ |key, value| value.to_s } }
       before do
         @input_stream.string = correct_feedback_input.join("\n")
       end
 
       it 'prompts the player for feedback' do
-        mastermind.get_valid_feedback_for_guess(random_guess)
+        mastermind.get_correct_feedback_from_player(correct_feedback)
         expect(@output_stream.string).not_to eq ""
       end
 
       it 'accepts input feedback from the player and returns it as data' do
-        expect(mastermind.get_valid_feedback_for_guess(random_guess)).to eq feedback
+        expect(mastermind.get_correct_feedback_from_player(correct_feedback)).to eq correct_feedback
       end
     end
 
-    context 'when player input is not initially the correct feedback for given guess' do
-      let(:incorrect_input_followed_by_valid_feedback_input) { 
-        ["this is", "one set of", "invalid input"] + feedback.map{ |key, value| value.to_s } 
+    context 'when player input does not result in feedback equal to given comparison feedback' do
+      let(:incorrect_input_followed_by_correct_feedback_input) { 
+        ["this is", "one set of", "invalid input"] + correct_feedback.map{ |key, value| value.to_s } 
       }
       before do
-        @input_stream.string = incorrect_input_followed_by_valid_feedback_input.join("\n")
+        @input_stream.string = incorrect_input_followed_by_correct_feedback_input.join("\n")
       end
 
       it 'repeats the prompt until player inputs correct feedback' do
-        mastermind.get_valid_feedback_for_guess(random_guess)
+        mastermind.get_correct_feedback_from_player(correct_feedback)
 
         interface_output_lines = @output_stream.string.split("\n")
         output_has_repeated_lines = interface_output_lines.uniq.length != interface_output_lines.length
