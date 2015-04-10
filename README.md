@@ -12,4 +12,9 @@ The task is to create a game that allows a human to play against the computer. T
 - **GuessChecker:** Handles comparing guesses to a code and returning feedback about matching, missing, or close elements.
 - **MastermindAITester:** A simple class for evaluating the performance of the Mastermind AI.
 
-Note: game_script.rb will run the game in the command line. core_extensions.rb contains extensions to the Ruby core - specifically a couple of Array methods. It's often irked me that you can't subtract items one-for-one from an Array by default - though I'd think twice about extending the core in anything other than a personal project. 
+Note: core_extensions.rb contains extensions to the Ruby core - specifically a couple of Array methods. It's often irked me that you can't subtract items one-for-one from an Array by default - though I'd think twice about extending the core in anything other than a personal project. 
+
+### Scripts
+
+- *game_script.rb* - run in the command line to play a game of Mastermind versus the computer
+- *ai_tester_script.rb* - Run in the command line to see stats on how the AI does across 100 random games of Mastermind. You can easily edit it if you'd like to run more or fewer tests, or to change the test game perameters (i.e. increase code length or change the elements comprising a code).
