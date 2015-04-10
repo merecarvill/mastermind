@@ -2,6 +2,10 @@ require 'rubygems'
 require 'factory_girl'
 
 require_relative '../lib/mastermind'
+require_relative '../lib/mastermind_ai'
+require_relative '../lib/mastermind_ai_tester'
+require_relative '../lib/guess_checker'
+require_relative '../lib/core_extensions'
 require_relative './factories/mastermind'
 
 module Helpers
