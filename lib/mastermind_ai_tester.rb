@@ -2,7 +2,6 @@ require_relative 'mastermind_ai'
 require_relative 'guess_checker'
 
 class MastermindAITester
-  attr_accessor :code_elements, :code_length
 
   def initialize(code_elements, code_length)
     @code_elements = code_elements
