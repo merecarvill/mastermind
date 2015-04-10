@@ -35,10 +35,15 @@ describe MastermindAI do
       expect(ai.last_feedback_received).to eq feedback
     end
 
-    it 'triggers ai to use feedback to eliminate possible codes' do
+    it 'triggers ai to use feedback to eliminate codes producing incompatible feedback' do
       num_initial_possible_codes = ai.possible_codes.length
       ai.receive_feedback(feedback)
       expect(ai.possible_codes.length).to be < num_initial_possible_codes
+
+      checker = GuessChecker.new(ai.last_guess_made)
+      ai.possible_codes.each do |possible_code|
+        expect(checker.compare_to_code(possible_code)).to eq feedback
+      end
     end
   end
 
