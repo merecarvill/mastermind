@@ -142,23 +142,23 @@ describe MastermindInterface do
     end
   end
 
-  describe '#display_code_maker_won' do
+  describe '#display_player_won' do
     before do
-      interface.display_code_maker_won
+      interface.display_player_won
     end
 
     it 'prints a message telling the player they won' do
-      expect(@output_stream.string).to eq interface.game_text[:display_code_maker_won] + "\n"
+      expect(@output_stream.string).to eq interface.game_text[:display_player_won] + "\n"
     end
   end
 
-  describe '#display_code_maker_lost' do
+  describe '#display_player_lost' do
     before do
-      interface.display_code_maker_lost
+      interface.display_player_lost
     end
 
     it 'prints a message telling the player they lost' do
-      expect(@output_stream.string).to eq interface.game_text[:display_code_maker_lost] + "\n"
+      expect(@output_stream.string).to eq interface.game_text[:display_player_lost] + "\n"
     end
   end
 end

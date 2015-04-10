@@ -46,12 +46,12 @@ class MastermindInterface
     return @input_stream.gets.strip.to_i
   end
 
-  def display_code_maker_won
-    @output_stream.puts @game_text[:display_code_maker_won]
+  def display_player_won
+    @output_stream.puts @game_text[:display_player_won]
   end
 
-  def display_code_maker_lost
-    @output_stream.puts @game_text[:display_code_maker_lost]
+  def display_player_lost
+    @output_stream.puts @game_text[:display_player_lost]
   end
 
   def clear_screen
@@ -92,8 +92,8 @@ eos
     game_text[:solicit_feedback] = 
       "\n" + "Input your feedback on the most recent guess (in numeral form, please)."
     game_text[:solicit_feedback_aspect] = "How many elements were "
-    game_text[:display_code_maker_won] = "\n" + "Your code wasn't guessed in time, so you win!"
-    game_text[:display_code_maker_lost] = "\n" + "Your code was guessed, so you lose!"
+    game_text[:display_player_won] = "\n" + "Your code wasn't guessed in time, so you win!"
+    game_text[:display_player_lost] = "\n" + "Your code was guessed, so you lose!"
     return game_text
   end
 end
