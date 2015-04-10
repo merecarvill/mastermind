@@ -280,12 +280,12 @@ describe Mastermind do
 
   describe '#code_guessed?' do
 
-    it 'returns true if given feedback has all matches, indicating the code was sucessfully guessed' do
+    it 'returns true if, in given feedback, number of matches equals code length' do
       correct_guess_feedback = {match: @default_code_length, close: 0, miss: 0}
       expect(mastermind.code_guessed?(correct_guess_feedback)).to be true
     end
 
-    it 'returns false if given feedback that is not all matches' do
+    it 'returns false if, in given feedback, number of matches does not equal the code length' do
       incorrect_guess_feedback = {match: 1, close: 3, miss: 0}
       expect(mastermind.code_guessed?(incorrect_guess_feedback)).to be false
     end
