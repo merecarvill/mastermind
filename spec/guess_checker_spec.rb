@@ -20,14 +20,9 @@ describe GuessChecker do
   end
 
   describe '#compare_to_code' do
-    
-    it 'takes a guess in array form' do
-      guess = Array.new
-      expect{checker.compare_to_code(guess)}.not_to raise_error
-    end
 
-    it 'returns a hash showing num elements in guess matching, close to, or absent from secret code' do
-      feedback = checker.compare_to_code([])
+    it 'returns num elements in given guess matching, close to, or absent from secret code' do
+      feedback = checker.compare_to_code(example_code.shuffle)
 
       expect(feedback.has_key?(:match)).to be true
       expect(feedback.has_key?(:close)).to be true
@@ -35,15 +30,14 @@ describe GuessChecker do
     end
 
     it 'returns all matches if all elements in guess are in secret code and in correct position' do
-      guess = checker.code
-      feedback = checker.compare_to_code(guess)
+      feedback = checker.compare_to_code(example_code)
 
-      expect(feedback[:match]).to eq guess.length
+      expect(feedback[:match]).to eq example_code.length
       expect(feedback[:close]).to eq 0
       expect(feedback[:miss]).to eq 0
     end
 
-    it 'returns all close if each element in guess is in secret code, but not the correct position' do
+    it 'returns all close if each element in guess is in secret code, but not the same position' do
       # code: [:blue, :blue, :red, :green]
       #       [CLOSE, CLOSE, CLOSE, CLOSE]
       guess = [:red, :green, :blue, :blue]
