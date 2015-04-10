@@ -1,7 +1,8 @@
 require_relative 'guess_checker'
 
 class MastermindAI
-  attr_accessor :possible_codes, :last_guess_made, :last_feedback_received
+  attr_accessor :last_guess_made, :last_feedback_received
+  attr_reader :possible_codes
 
   def initialize(code_elements, code_length)
     generate_possible_codes(code_elements, code_length)

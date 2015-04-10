@@ -103,6 +103,7 @@ describe GuessChecker do
   describe '#get_matches' do
 
     it 'returns the elements in a guess matching the element in the same position in the secret code' do
+      # code: [:blue, :blue, :red, :green]
       guess = [:blue, :blue, :red, :foo]
       expect(checker.get_matches(guess)).to eq guess - [:foo]
     end
