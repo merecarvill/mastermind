@@ -14,7 +14,6 @@ describe MastermindInterface do
   end
 
   let(:example_code) { [:blue, :blue, :red, :green] }
-  let(:example_code_input) { "blue blue red green" }
   let(:interface) {
     MastermindInterface.new(@default_code_elements, @default_code_length, @input_stream, @output_stream)
   }
@@ -37,6 +36,7 @@ describe MastermindInterface do
   end
 
   describe '#solicit_code' do
+    let(:example_code_input) { "blue blue red green" }
     before do
       @input_stream.string = example_code_input
     end
@@ -67,7 +67,7 @@ describe MastermindInterface do
       interface.display_code_reminder(example_code)
     end
 
-    it 'prints a reminder of the given secret code, including all code elements' do
+    it 'prints a reminder of the given secret code' do
       text = interface.game_text[:display_code_reminder] + interface.code_to_s(example_code) + "\n"
       expect(@output_stream.string).to eq text
     end
@@ -94,7 +94,6 @@ describe MastermindInterface do
 
   describe '#solicit_feedback_aspect' do
     let(:aspects) { [:match, :close, :miss] }
-
     before do
       @input_stream.string = "2"
     end
@@ -104,13 +103,6 @@ describe MastermindInterface do
 
       interface.solicit_feedback_aspect(:foo)
       expect(@output_stream.string.start_with?(starting_text)).to be true
-    end
-
-    it 'includes the aspect solicited in the prompt' do
-      aspect = aspects.sample
-
-      interface.solicit_feedback_aspect(aspect)
-      expect(@output_stream.string.include?(aspect.to_s)).to be true
     end
 
     it 'specifies the aspect solicited in the message' do
@@ -135,7 +127,7 @@ describe MastermindInterface do
     end
 
     it 'returns the integer 0 when player input does not begin with a numerical element' do
-      @input_stream.string = "f8"
+      @input_stream.string = "two2"
 
       player_input = interface.solicit_feedback_aspect(:foo)
       expect(player_input).to eq 0
