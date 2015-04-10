@@ -52,14 +52,8 @@ describe MastermindAI do
     let(:length) { 2 }
     let(:expected_output) { [[1, 1], [1, 0], [0, 1], [0, 0]] }
 
-    it 'takes the guess elements and code length' do
-      expect{ai.generate_possible_codes(elements, length)}.to_not raise_error
-    end
-
-    it 'stores all possible codes in an instance variable' do
+    it 'stores all possible codes, given code elements and code length, in an instance variable' do
       ai.generate_possible_codes(elements, length)
-
-      expect(ai.possible_codes.length).to eq expected_output.length
       expect(ai.possible_codes).to match_array expected_output
     end
   end
@@ -73,7 +67,7 @@ describe MastermindAI do
     end
 
 
-    it 'eliminates codes whose feedback != last received feedback when compared to last guess made' do
+    it 'eliminates codes whose feedback != last received feedback, when compared to last guess made' do
       expect(ai.possible_codes.include?(ai.last_guess_made)).to be false
       expect(ai.possible_codes.include?(secret_code)).to be true
 
