@@ -3,7 +3,8 @@ require_relative 'guess_checker'
 require_relative 'mastermind_ai'
 
 class Mastermind
-  attr_accessor :ai, :interface, :guess_checker, :code_elements, :code_length, :max_turns
+  attr_accessor :ai, :interface, :guess_checker
+  attr_reader :code_elements, :code_length, :max_turns
 
   def initialize(params = {})
     @code_elements = params[:code_elements] ||= [:red, :green, :orange, :yellow, :blue, :purple]
@@ -44,12 +45,12 @@ class Mastermind
   end
 
   def handle_one_turn
-      @ai.make_guess
-      display_guess_with_secret_code_reminder(@ai.last_guess_made)
+    @ai.make_guess
+    display_guess_with_secret_code_reminder(@ai.last_guess_made)
 
-      correct_feedback = @guess_checker.compare_to_code(@ai.last_guess_made)
-      player_feedback = get_correct_feedback_from_player(correct_feedback)
-      @ai.receive_feedback(player_feedback)
+    correct_feedback = @guess_checker.compare_to_code(@ai.last_guess_made)
+    player_feedback = get_correct_feedback_from_player(correct_feedback)
+    @ai.receive_feedback(player_feedback)
   end
 
   def display_guess_with_secret_code_reminder(ai_guess)
@@ -68,6 +69,8 @@ class Mastermind
 
   def code_valid?(code)
     return false if code == nil
-    code.length == @code_length && code.reduce{ |bool, element| bool && @code_elements.include?(element) }
+    code.length == @code_length && 
+      code.reduce{ |bool, element| bool && 
+      @code_elements.include?(element) }
   end
 end
