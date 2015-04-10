@@ -36,11 +36,11 @@ class Mastermind
       handle_one_turn
 
       if code_guessed?(@ai.last_feedback_received)
-        @interface.display_code_maker_lost
+        @interface.display_player_lost
         return
       end
     end
-    @interface.display_code_maker_won
+    @interface.display_player_won
   end
 
   def handle_one_turn

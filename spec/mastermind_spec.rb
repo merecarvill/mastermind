@@ -13,8 +13,6 @@ describe Mastermind do
     @output_stream.string = ""
   end
   
-  let(:example_code) { [:blue, :blue, :red, :green] }
-  let(:random_guess) { example_code.map{ @default_code_elements.sample } }
   let(:testing_interface) { 
     MastermindInterface.new(@default_code_elements, @default_code_length, @input_stream, @output_stream)
   }
@@ -69,16 +67,159 @@ describe Mastermind do
     end
   end
 
+  describe '#set_up_game' do
+    let(:valid_code) { generate_random_code }
+    before do
+      allow(mastermind.interface).to receive(:clear_screen)
+      @input_stream.string = valid_code.join(" ")
+      mastermind.set_up_game
+    end
+
+    it 'displays the game instructions and a prompt for a secret code from player' do
+      expect(@output_stream.string).not_to eq ""
+    end
+
+    it 'initializes a GuessChecker whose code equals the code input by the player' do
+      expect(mastermind.guess_checker.code).to eq valid_code
+    end
+  end
+
+  describe '#init_guess_checker_with_valid_code_from_player' do
+    let(:valid_code) { generate_random_code }
+
+    context 'when given valid input by player' do
+      before do
+        @input_stream.string = valid_code.join(" ")
+        mastermind.init_guess_checker_with_valid_code_from_player
+      end
+
+      it 'prompts the player for a code to be used as the secret code' do
+        expect(@output_stream.string).not_to eq ""
+      end
+
+      it 'initializes a GuessChecker with the input code and stores it in an instance variable' do
+        expect(mastermind.guess_checker.code).to eq valid_code
+      end
+    end
+
+    context 'when initially given invalid input by player' do
+      before do
+        @input_stream.string = "this is invalid input\n" + valid_code.join(" ")
+        mastermind.init_guess_checker_with_valid_code_from_player
+      end
+
+      it 'repeats the prompt until it recieves a valid code' do
+        expect(has_at_least_one_repeated_line?(@output_stream.string)).to be true
+      end
+    end
+  end
+
+  describe '#run_game' do
+    let(:mastermind) { 
+      build(:mastermind, interface: testing_interface) 
+    }
+    let(:non_winning_feedback) { {match: @default_code_length - 1, close: 1, miss: 0} }
+    let(:winning_feedback) { {match: @default_code_length, close: 0, miss: 0} }
+    let(:arbitrary_winning_turn) { rand(@default_max_turns) + 1 }
+    before do
+      allow(mastermind.interface).to receive(:clear_screen)
+      mastermind.ai.last_feedback_received = non_winning_feedback
+      @turn_counter = 0
+    end
+
+    context 'when computer successfully guesses the secret code' do
+      before do
+        allow(mastermind).to receive(:handle_one_turn) do
+          @turn_counter += 1
+          if @turn_counter == arbitrary_winning_turn
+            mastermind.ai.last_feedback_received = winning_feedback
+          end
+        end
+        mastermind.run_game
+      end
+
+      it 'ceases executing turns after the code is guessed' do
+        expect(@turn_counter).to eq arbitrary_winning_turn
+      end
+
+      it 'displays a message telling the player they lost' do
+        last_output_line = @output_stream.string.split("\n").last
+        mentions_loss = last_output_line.include?("lose") || last_output_line.include?("lost")
+
+        expect(mentions_loss).to be true
+      end
+    end
+
+    context 'when computer does not guess the secret code' do
+      before do
+        allow(mastermind).to receive(:handle_one_turn) do
+          @turn_counter += 1
+        end
+        mastermind.run_game
+      end
+
+      it 'executes a number of turns equal to the max turns of the game' do
+        expect(@turn_counter).to eq @default_max_turns
+      end
+
+      it 'displays a message telling the player they won' do
+        last_output_line = @output_stream.string.split("\n").last
+        mentions_win = last_output_line.include?("win") || last_output_line.include?("won")
+
+        expect(mentions_win).to be true
+      end
+    end
+
+    # it 'displays a message telling the player whether they won or lost' do
+    #   last_output_line = @output_stream.string.split("\n").last
+    #   mentions_win_or_loss = 
+    #     last_output_line.include?("win") ||
+    #     last_output_line.include?("won") ||
+    #     last_output_line.include?("lose") ||
+    #     last_output_line.include?("lost")
+
+    #   expect(mentions_win_or_loss).to be true
+    # end
+  end
+
+  describe '#handle_one_turn' do
+    let(:mastermind) { 
+      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(generate_random_code)) 
+    }
+    let(:ai_guess) { generate_random_code }
+    let(:feedback) { mastermind.guess_checker.compare_to_code(ai_guess) }
+    let(:feedback_inputs) { feedback.map{ |key, value| value.to_s } }
+    before do
+      allow(mastermind.ai).to receive(:make_guess).and_return(ai_guess)
+      mastermind.ai.last_guess_made = ai_guess
+
+      @input_stream.string = feedback_inputs.join("\n")
+    end
+
+    it 'displays a guess made by the game ai' do
+      mastermind.handle_one_turn
+      ai_guess.each do |element|
+        expect(@output_stream.string.include?(element.to_s)).to be true
+      end
+    end
+
+    it 'accepts feedback on the guess from the player and passes it to the game ai' do
+      expect(mastermind.ai).to receive(:receive_feedback) { feedback }
+      mastermind.handle_one_turn
+    end
+  end
+
   describe '#display_guess_with_secret_code_reminder' do
     let(:mastermind) { 
-      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(example_code)) 
+      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(generate_random_code)) 
     }
+    let(:guess) { generate_random_code }
     before do
-      mastermind.display_guess_with_secret_code_reminder(random_guess)
+      mastermind.display_guess_with_secret_code_reminder(guess)
     end
 
     it 'displays the given guess' do
-      random_guess.each do |element|
+      guess.each do |element|
         expect(@output_stream.string.include?(element.to_s))
       end
     end
@@ -92,41 +233,38 @@ describe Mastermind do
 
   describe '#get_correct_feedback_from_player' do
     let(:mastermind) { 
-      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(example_code)) 
+      build(:mastermind, interface: testing_interface, guess_checker: GuessChecker.new(generate_random_code)) 
     }
-    let(:correct_feedback) { mastermind.guess_checker.compare_to_code(random_guess) }
+    let(:correct_feedback) { mastermind.guess_checker.compare_to_code(generate_random_code) }
+    let(:correct_feedback_inputs) { correct_feedback.map{ |key, value| value.to_s } }
+    before do
+        @input_stream.string = correct_feedback_inputs.join("\n")
+    end
+
+    it 'prompts the player for feedback' do
+      mastermind.get_correct_feedback_from_player(correct_feedback)
+      expect(@output_stream.string).not_to eq ""
+    end
 
     context 'when player input results in feedback equal to given comparison feedback' do
-      let(:correct_feedback_input) { correct_feedback.map{ |key, value| value.to_s } }
-      before do
-        @input_stream.string = correct_feedback_input.join("\n")
-      end
-
-      it 'prompts the player for feedback' do
-        mastermind.get_correct_feedback_from_player(correct_feedback)
-        expect(@output_stream.string).not_to eq ""
-      end
 
       it 'accepts input feedback from the player and returns it as data' do
         expect(mastermind.get_correct_feedback_from_player(correct_feedback)).to eq correct_feedback
       end
     end
 
-    context 'when player input does not result in feedback equal to given comparison feedback' do
-      let(:incorrect_input_followed_by_correct_feedback_input) { 
-        ["this is", "one set of", "invalid input"] + correct_feedback.map{ |key, value| value.to_s } 
+    context 'when initial player input does not result in feedback equal to given comparison feedback' do
+      let(:incorrect_inputs_followed_by_correct_feedback_inputs) { 
+        ["this is one", "set of three", "invalid inputs"] + correct_feedback.map{ |key, value| value.to_s } 
       }
       before do
-        @input_stream.string = incorrect_input_followed_by_correct_feedback_input.join("\n")
+        @input_stream.string = incorrect_inputs_followed_by_correct_feedback_inputs.join("\n")
       end
 
       it 'repeats the prompt until player inputs correct feedback' do
         mastermind.get_correct_feedback_from_player(correct_feedback)
 
-        interface_output_lines = @output_stream.string.split("\n")
-        output_has_repeated_lines = interface_output_lines.uniq.length != interface_output_lines.length
-
-        expect(output_has_repeated_lines).to be true
+        expect(has_at_least_one_repeated_line?(@output_stream.string)).to be true
       end
     end
   end
@@ -147,7 +285,7 @@ describe Mastermind do
     end
 
     it 'returns true if the given code is the correct length and each of the elements are valid' do
-      expect(mastermind.code_valid?(example_code)).to be true
+      expect(mastermind.code_valid?(generate_random_code)).to be true
     end
   end
 
