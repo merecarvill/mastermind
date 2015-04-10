@@ -169,17 +169,6 @@ describe Mastermind do
         expect(mentions_win).to be true
       end
     end
-
-    # it 'displays a message telling the player whether they won or lost' do
-    #   last_output_line = @output_stream.string.split("\n").last
-    #   mentions_win_or_loss = 
-    #     last_output_line.include?("win") ||
-    #     last_output_line.include?("won") ||
-    #     last_output_line.include?("lose") ||
-    #     last_output_line.include?("lost")
-
-    #   expect(mentions_win_or_loss).to be true
-    # end
   end
 
   describe '#handle_one_turn' do
