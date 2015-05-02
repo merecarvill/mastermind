@@ -1,5 +1,3 @@
-require_relative 'core_extensions'
-
 class GuessChecker
   attr_reader :code
 
@@ -9,7 +7,7 @@ class GuessChecker
 
   def compare_to_code(guess)
     matching_elements = get_matches(guess)
-    
+
     num_matches = matching_elements.length
     num_close = count_close_elements(guess, matching_elements)
     num_misses = @code.length - num_matches - num_close
@@ -18,26 +16,34 @@ class GuessChecker
   end
 
   def get_matches(guess)
-    matches = []
-    guess.each_with_index do |guess_element, index|
+    guess.each_with_index.with_object([]) do |(guess_element, index), matches|
       code_element = @code[index]
       matches << guess_element if guess_element == code_element
     end
-    matches
   end
 
   def count_close_elements(guess, matching_elements)
-    guess_elements_minus_matches = guess.subtract_one_for_one(matching_elements)
-    code_elements_minus_matches = @code.subtract_one_for_one(matching_elements)
+    guess_elements_minus_matches = make_new_array_minus_elements(guess, matching_elements)
+    code_elements_minus_matches = make_new_array_minus_elements(@code, matching_elements)
     num_close = 0
 
     guess_elements_minus_matches.each do |element|
       if code_elements_minus_matches.include?(element)
         num_close += 1
-        code_elements_minus_matches.delete_first(element)
+        remove_element_from(code_elements_minus_matches, element)
       end
     end
     num_close
+  end
+
+  def make_new_array_minus_elements(array, elements)
+    elements.each_with_object(array.dup) do |element, new_array|
+      remove_element_from(new_array, element)
+    end
+  end
+
+  def remove_element_from(array, element)
+    array.delete_at(array.index(element) || array.length)
   end
 
   def correct_feedback?(guess, feedback)

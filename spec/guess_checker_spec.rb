@@ -118,4 +118,46 @@ describe GuessChecker do
       expect(checker.count_close_elements(guess, matches)).to eq 3
     end
   end
+
+  describe '#make_new_array_minus_elements' do
+    let(:example_array) { [1, 1, 2, 3] }
+
+    it 'returns new array with the given elements removed from the original one-for-one' do
+      expect(checker.make_new_array_minus_elements(example_array, [1, 2])).to eq [1, 3]
+    end
+
+    it 'ignores given elements not present in original array' do
+      expect(checker.make_new_array_minus_elements(example_array,[1, 2, 100, :foo])).to eq [1, 3]
+    end
+
+  end
+
+  describe '#remove_element_from' do
+    let(:example_array) { [1, 1, 2, 3] }
+
+    context 'if given element is in array' do
+
+      it 'deletes the first occurrence of given element from array' do
+        checker.remove_element_from(example_array, 1)
+        expect(example_array).to eq [1, 2, 3]
+      end
+
+      it 'returns the deleted item' do
+        expect(checker.remove_element_from(example_array, 1)).to eq 1
+      end
+    end
+
+    context 'if given item is not in array' do
+
+      it 'does not change the array' do
+        example_array_before = example_array.dup
+        checker.remove_element_from(example_array, 0)
+        expect(example_array).to eq example_array_before
+      end
+
+      it 'returns nil' do
+        expect(checker.remove_element_from(example_array, 0)).to be nil
+      end
+    end
+  end
 end
