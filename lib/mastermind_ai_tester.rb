@@ -10,7 +10,7 @@ class MastermindAITester
 
   def run_tests(num)
     test_data = []
-    num.times do 
+    num.times do
       test_data << run_one_test(MastermindAI.new(@code_elements, @code_length))
     end
     avg, max, percent_max = calculate_stats(test_data)
@@ -36,8 +36,7 @@ eos
     turn_counter = 0
 
     until feedback[:match] == @code_length
-      guess = ai.make_guess
-      feedback = checker.compare_to_code(guess)
+      feedback = checker.compare_to_code(ai.make_guess)
       ai.receive_feedback(feedback)
       turn_counter += 1
     end

@@ -10,7 +10,6 @@ class MastermindAI
 
   def make_guess
     @last_guess_made = @possible_codes.sample
-    return @last_guess_made
   end
 
   def receive_feedback(feedback)
